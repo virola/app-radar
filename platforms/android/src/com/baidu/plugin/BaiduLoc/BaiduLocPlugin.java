@@ -27,15 +27,14 @@ public class BaiduLocPlugin extends CordovaPlugin {
 	public MyLocationListenner myListener = new MyLocationListenner();
 		
 	private JSONObject jsonObj = new JSONObject(); 
-	private CallbackContext cbContext = null;
 	
-	boolean isFirstLoc = true;//是否首次定位
+	boolean isFinishRun = false;//是否完成UI线程
+
 	
     @Override
     public boolean execute(
         String action, JSONArray args, CallbackContext callbackContext
     ) throws JSONException {
-    	cbContext = callbackContext;
         if (action.equals("get")) {
         	
             // test before
@@ -47,10 +46,21 @@ public class BaiduLocPlugin extends CordovaPlugin {
         	mLocClient.stop();
         	Log.d("Map", " Plugin execute stop");
             callbackContext.success();
+            isFinishRun = true;
             
         } 
         else {    
             callbackContext.error("test-other-exception");
+            isFinishRun = true;
+        }
+
+        while (!isFinishRun) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // ignoring exception, since we have to wait
+                // ui thread to finish
+            }
         }
         
 		return false;
@@ -119,10 +129,12 @@ public class BaiduLocPlugin extends CordovaPlugin {
 				
 	        
 				cbContext.success(jsonObj);
+                isFinishRun = true;
+
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				Log.d("requestMapData", "fail in listener");
+
 				cbContext.error("unkown-error");
+                isFinishRun = true;
 			}
 			
 		}
@@ -132,6 +144,7 @@ public class BaiduLocPlugin extends CordovaPlugin {
 			// TODO Auto-generated method stub
 			Log.d("requestMapData", "dont know what's this");
 			cbContext.error("unkown-error");
+            isFinishRun = true;
 		}
 		
 

@@ -92,9 +92,10 @@ var app = (function() {
 
 
 window.Location = function(success,fail,act) {
-	if(act){
+	if (act) {
 		var action = act;
-	}else{
+	}
+	else {
 		var action = 'get';
 	}
 
@@ -107,7 +108,7 @@ window.Location = function(success,fail,act) {
 			}else{
 				fail(errcode);
 			}
-		},fail,"BaiduLocPlugin", action , []);
+		}, fail, "BaiduLocPlugin", action, []);
 	}
 	else {
 		fail && fail('no cordova');
