@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>百度雷达</title>
+</head>
+
+    <a id="setup" class="app" data-role="page" href="list.html">
+        <div class="blink">
+            <p class="event listening">正在启动程序...</p>
+            <p class="event received"></p>
+        </div>
+
+        <div id="geolocation"></div>
+    </a>
+
+
+    <script type="text/javascript" src="phonegap.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+@import 'var';
+@import 'common';
+
+.hide {
+    display: none;
+}
+
+#content {
+    padding: 0;
+}
+
+.rec-list {
+    width: 100%;
+
+    li {
+        float: left;
+        width: 50%;
+        background-color: @default-color;
+
+        a {
+            position: relative;
+            display: block;
+            border: 1px solid #FFF;
+            height: 4em;
+            padding: 0.1em;
+            color: #000;
+            text-shadow: 0 0 0;
+            text-decoration: none;
+            
+            h3 {
+                font-size: 1.2em;
+                line-height: 1.5em;
+                color: #000;
+            }
+            span {
+                font-size: 0.9em;
+                display: none;
+                color: #666;
+
+                &.level, &.tel, &.distance {
+                    display: inline;
+                }
+
+                &.distance {
+                    text-align: right;
+                    display: block;
+                    color: @color-sub;
+                    padding-right: 0.4em;
+                    /*position: absolute;
+                    top: 1em;
+                    right: 1em;*/
+                }
+            }
+        }
+    
+        &.scene {
+            background-color: @scene-color;
+        }
+
+        &.hotel {
+            background-color: @color-pink;
+        }
+    }
+
+
+    li a:active {
+
+    }
+}
+
+@import 'side';
