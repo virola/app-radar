@@ -9,7 +9,7 @@ var query = {
 };
 
 function debugMsg(msg) {
-    $('#debug').html(msg);
+    $('#debug').append(msg + '<br>');
 }
 
 var GeoLocation = (function () {
@@ -88,4 +88,13 @@ var GeoLocation = (function () {
 
 })();
 
-GeoLocation.init();
+
+app.on('deviceready', function () {
+    GeoLocation.init();    
+});
+
+app.on('deviceonline', function () {
+    alert('you are online!');    
+});
+
+app.initialize();

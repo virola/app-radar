@@ -32,6 +32,8 @@ module.exports = function (grunt) {
 
             index: {
                 src: [
+                    'www/src/app.js',
+                    'www/src/BaiduLoc.js',
                     'www/src/index.js'
                 ],
                 dest: 'www/js/index.js'
@@ -39,6 +41,7 @@ module.exports = function (grunt) {
 
             list: {
                 src: [
+                    'www/src/app.js',
                     'www/src/BaiduLoc.js',
                     'www/src/list.js'
                 ],

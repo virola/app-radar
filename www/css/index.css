@@ -101,3 +101,131 @@ body {
   animation: fade 3000ms infinite;
   -webkit-animation: fade 3000ms infinite;
 }
+.hide {
+  display: none;
+}
+#debug {
+  clear: both;
+}
+#content {
+  padding: 0;
+}
+.rec-list {
+  width: 100%;
+}
+.rec-list li {
+  float: left;
+  width: 50%;
+  background-color: #e5e5e5;
+}
+.rec-list li a {
+  position: relative;
+  display: block;
+  border: 1px solid #FFF;
+  height: 4em;
+  padding: 0.1em;
+  color: #000;
+  text-shadow: 0 0 0;
+  text-decoration: none;
+}
+.rec-list li a h3 {
+  font-size: 1.2em;
+  line-height: 1.5em;
+  color: #000;
+}
+.rec-list li a span {
+  font-size: 0.9em;
+  display: none;
+  color: #666;
+}
+.rec-list li a span.level,
+.rec-list li a span.tel,
+.rec-list li a span.distance {
+  display: inline;
+}
+.rec-list li a span.distance {
+  text-align: right;
+  display: block;
+  color: #0099cc;
+  padding-right: 0.4em;
+  /*position: absolute;
+                    top: 1em;
+                    right: 1em;*/
+
+}
+.rec-list li.scene {
+  background-color: #4fdbc2;
+}
+.rec-list li.hotel {
+  background-color: #ffbded;
+}
+/* Adjust the width of the left reveal menu.
+Copy all CSS from jquery.mobile.panel.css and delete the properties other than width, left, right and transform.
+Then delete the selectors/rules for display modes (reveal/push/overlay) and the position (left/right) that you don't use.
+If you don't use fixed toolbars on your page you can delete those selectors as well.
+Narrow the scope of the selectors to prevent other panels being affected by the overrides. */
+#left-panel.ui-panel {
+  width: 15em;
+}
+#left-panel.ui-panel-closed {
+  width: 0;
+}
+.ui-panel-position-left.ui-panel-display-reveal {
+  left: 0;
+}
+.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open,
+.ui-panel-dismiss-position-left.ui-panel-dismiss-open {
+  left: 15em;
+  right: -15em;
+}
+.ui-panel-animate.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open.ui-panel-content-wrap-display-reveal {
+  left: 0;
+  right: 0;
+  -webkit-transform: translate3d(15em, 0, 0);
+  -moz-transform: translate3d(15em, 0, 0);
+  transform: translate3d(15em, 0, 0);
+}
+/* Combined listview collapsible menu. */
+/* Unset negative margin bottom on the listviews. */
+#left-panel .ui-panel-inner > .ui-listview {
+  margin-bottom: 0;
+}
+/* Unset top and bottom margin on collapsible set. */
+#left-panel .ui-collapsible-set {
+  margin: 0;
+}
+/* The first collapsible contains the collapsible set. Make it fit exactly in the collapsible content. */
+#left-panel .ui-panel-inner > .ui-collapsible > .ui-collapsible-content {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+/* Remove border top if a collapsible comes after a listview. */
+#left-panel .ui-panel-inner > .ui-collapsible > .ui-collapsible-heading .ui-btn,
+#left-panel .ui-collapsible.ui-first-child .ui-collapsible-heading .ui-btn {
+  border-top: none;
+}
+/* Give the first collapsible heading the same padding, i.e. same height, as the list items. */
+#left-panel .ui-collapsible-heading .ui-btn-inner {
+  padding: .7em 40px .7em 15px;
+}
+/* Give the other collapsible headings the same padding and font-size as the list divider. */
+#left-panel .ui-collapsible-set .ui-collapsible-heading .ui-btn-inner {
+  padding: .5em 40px .5em 15px;
+  font-size: 14px;
+}
+/* Styling of the close button in both panels. */
+.ui-panel-inner > .ui-listview .ui-first-child {
+  background: #eee;
+}
+/* Reveal menu shadow on top of the list items */
+.ui-panel-display-reveal {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.ui-panel-content-wrap-position-left {
+  -webkit-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+}

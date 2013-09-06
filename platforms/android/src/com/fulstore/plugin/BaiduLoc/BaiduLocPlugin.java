@@ -26,8 +26,6 @@ public class BaiduLocPlugin extends CordovaPlugin {
     ) throws JSONException {
     	cbContext = callbackContext;
         if (action.equals("get")) {
-            String message = args.getString(0);
-            this.echo(message, callbackContext);
 
             // test before
             cordova.getActivity().runOnUiThread(new RunnableLoc());
@@ -45,16 +43,6 @@ public class BaiduLocPlugin extends CordovaPlugin {
         
 		return false;
         
-        // waiting ui thread to finish
-// 		while (this.result == null) {
-// 			try {
-// 				Thread.sleep(100);
-// 			} catch (InterruptedException e) {
-// 				// ignoring exception, since we have to wait
-// 				// ui thread to finish
-// 			}
-// 		}
- 		
       
     }
 	
@@ -65,14 +53,6 @@ public class BaiduLocPlugin extends CordovaPlugin {
     		mLocationClient = null;
     	}
     	super.onDestroy();
-    }
-
-    private void echo(String message, CallbackContext callbackContext) {
-        if (message != null && message.length() > 0) {
-        	callbackContext.success(message);
-        } else {
-            callbackContext.error("Expected one non-empty string argument.");
-        }
     }
 	
 	

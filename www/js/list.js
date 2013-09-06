@@ -1,17 +1,119 @@
+
+var util = (function () {
+    
+    var exports = {};
+
+    /**
+     * 事件观察者
+     * 
+     * @constructor
+     */
+    function Observable() {
+        this.events = {};
+    }
+
+    Observable.prototype = {
+        constructor: Observable,
+        on: function ( type, listener ) {
+            if ( !(this.events[ type ] instanceof Array ) ) {
+                this.events[ type ] = [];
+            }
+
+            this.events[ type ].push( listener );
+        },
+
+        un: function ( type, listener ) {
+            var events = this.events[ type ];
+            var len = events instanceof Array && events.length;
+
+            while ( len-- ) {
+                if ( events[ len ] === listener ) {
+                    events.splice( len, 1 );
+                }
+            }
+        },
+
+        fire: function ( type, evt ) {
+            var events = this.events[ type ];
+            var me = this;
+            if ( events instanceof Array ) {
+                for ( var i = 0, len = events.length; i < len; i++) {
+                    listener = events[i];
+                    if ( typeof listener == 'function' ) {
+                        listener.call( me, evt );
+                    }
+                }
+            }
+        }
+    };
+
+    exports.Observable = Observable;
+
+    return exports;
+   
+})();
+
+/**
+ * 启动程序
+ * 
+ * @type {[type]}
+ */
+var app = (function() {
+    var exports = new util.Observable();
+
+    exports.initialize = function() {
+        bindEvents();
+    };
+
+    function bindEvents() {
+        document.addEventListener('deviceready', onReady, false);
+        document.addEventListener('online', onOnline, false);
+        document.addEventListener('offline', onOffline, false);
+    }
+
+    function onReady() {
+        console.log('ready');
+        app.fire('deviceready');
+    }
+
+    function onOnline() {
+        app.fire('deviceonline');
+        console.log('online');
+    }
+
+    function onOffline() {
+        app.fire('deviceoffline');
+        console.log('offline');
+    }
+
+    return exports;
+})();
+
+
+
 window.Location = function(success,fail,act) {
 	if(act){
 		var action = act;
 	}else{
 		var action = 'get';
 	}
-    cordova.exec(function(pos){
-		var errcode = pos.LocType;
+
+	if (cordova) {
+		cordova.exec(function(pos){
+			console.log(pos);
+			var errcode = pos.LocType;
 			if(errcode == 61 || errcode == 65 || errcode == 161){
 				success(pos);
 			}else{
 				fail(errcode);
 			}
-	},fail,"BaiduLocPlugin", action , []);
+		},fail,"BaiduLocPlugin", action , []);
+	}
+	else {
+		fail && fail('no cordova');
+	}
+
+    
 };
 
 
@@ -25,7 +127,7 @@ var query = {
 };
 
 function debugMsg(msg) {
-    $('#debug').html(msg);
+    $('#debug').append(msg + '<br>');
 }
 
 var GeoLocation = (function () {
@@ -104,4 +206,13 @@ var GeoLocation = (function () {
 
 })();
 
-GeoLocation.init();
+
+app.on('deviceready', function () {
+    GeoLocation.init();    
+});
+
+app.on('deviceonline', function () {
+    alert('you are online!');    
+});
+
+app.initialize();
