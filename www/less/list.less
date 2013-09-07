@@ -5,6 +5,7 @@
 }
 
 #debug {
+    display: none;
     .clearfix();
 }
 
@@ -41,18 +42,15 @@
                 display: none;
                 color: #666;
 
-                &.level, &.tel, &.distance {
+                &.level, &.tel, &.distance, &.coupon {
                     display: inline;
                 }
 
                 &.distance {
-                    text-align: right;
-                    display: block;
                     color: @color-sub;
-                    padding-right: 0.4em;
-                    /*position: absolute;
-                    top: 1em;
-                    right: 1em;*/
+                    position: absolute;
+                    bottom: .4em;
+                    right: .4em;
                 }
             }
         }
@@ -63,6 +61,39 @@
 
         &.hotel {
             background-color: @color-pink;
+        }
+
+        &.food {
+            background-color: @food-color;
+        }
+
+        &.enjoy {
+            background-color: @enjoy-color;
+        }
+        &.market {
+            background-color: @market-color;
+        }
+        &.shopping {
+            background-color: @shopping-color;
+        }
+
+        &.life {
+            background-color: @life-color;
+        }
+
+        &.no-data-block, &.data-end-block {
+            background: none;
+            width: 100%;
+            text-align: center;
+            float: none;
+            color: #999;
+            font-size: 1.5em;
+            line-height: 6em;
+        }
+
+        &.data-end-block {
+            height: 1.5em;
+            line-height: 1;
         }
     }
 

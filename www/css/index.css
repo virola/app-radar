@@ -38,6 +38,7 @@ h4,
 h5,
 h6,
 h7,
+p,
 em,
 strong,
 i,
@@ -104,6 +105,9 @@ body {
 .hide {
   display: none;
 }
+#debug {
+  display: none;
+}
 #debug:after {
   clear: both;
   content: ' ';
@@ -153,18 +157,15 @@ body {
 }
 .rec-list li a span.level,
 .rec-list li a span.tel,
-.rec-list li a span.distance {
+.rec-list li a span.distance,
+.rec-list li a span.coupon {
   display: inline;
 }
 .rec-list li a span.distance {
-  text-align: right;
-  display: block;
   color: #0099cc;
-  padding-right: 0.4em;
-  /*position: absolute;
-                    top: 1em;
-                    right: 1em;*/
-
+  position: absolute;
+  bottom: .4em;
+  right: .4em;
 }
 .rec-list li.scene {
   background-color: #4fdbc2;
@@ -172,13 +173,37 @@ body {
 .rec-list li.hotel {
   background-color: #ffbded;
 }
-/* Adjust the width of the left reveal menu.
-Copy all CSS from jquery.mobile.panel.css and delete the properties other than width, left, right and transform.
-Then delete the selectors/rules for display modes (reveal/push/overlay) and the position (left/right) that you don't use.
-If you don't use fixed toolbars on your page you can delete those selectors as well.
-Narrow the scope of the selectors to prevent other panels being affected by the overrides. */
+.rec-list li.food {
+  background-color: #ffad26;
+}
+.rec-list li.enjoy {
+  background-color: #38d7ff;
+}
+.rec-list li.market {
+  background-color: #c1f797;
+}
+.rec-list li.shopping {
+  background-color: #ac4e83;
+}
+.rec-list li.life {
+  background-color: #7dd2d1;
+}
+.rec-list li.no-data-block,
+.rec-list li.data-end-block {
+  background: none;
+  width: 100%;
+  text-align: center;
+  float: none;
+  color: #999;
+  font-size: 1.5em;
+  line-height: 6em;
+}
+.rec-list li.data-end-block {
+  height: 1.5em;
+  line-height: 1;
+}
 #left-panel.ui-panel {
-  width: 15em;
+  width: 8em;
 }
 #left-panel.ui-panel-closed {
   width: 0;
@@ -188,15 +213,15 @@ Narrow the scope of the selectors to prevent other panels being affected by the 
 }
 .ui-panel-content-wrap-position-left.ui-panel-content-wrap-open,
 .ui-panel-dismiss-position-left.ui-panel-dismiss-open {
-  left: 15em;
-  right: -15em;
+  left: 8em;
+  right: -8em;
 }
 .ui-panel-animate.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open.ui-panel-content-wrap-display-reveal {
   left: 0;
   right: 0;
-  -webkit-transform: translate3d(15em, 0, 0);
-  -moz-transform: translate3d(15em, 0, 0);
-  transform: translate3d(15em, 0, 0);
+  -webkit-transform: translate3d(8em, 0, 0);
+  -moz-transform: translate3d(8em, 0, 0);
+  transform: translate3d(8em, 0, 0);
 }
 /* Combined listview collapsible menu. */
 /* Unset negative margin bottom on the listviews. */
@@ -241,4 +266,8 @@ Narrow the scope of the selectors to prevent other panels being affected by the 
   -webkit-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
   box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+}
+#detail .ui-footer p {
+  padding: 0.2em 1em;
+  text-align: right;
 }

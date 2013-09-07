@@ -66,6 +66,8 @@ var GeoLocation = (function () {
     var list;
 
     function requestData() {
+        var url = util.getConfig('mapapi');
+
         var data = $.extend(query, {
             location: location.lat + ',' + location.lng
         });
@@ -90,8 +92,10 @@ app.on('deviceready', function () {
     GeoLocation.init();    
 });
 
+
 app.on('online', function () {
     alert('you are online!');    
 });
 
 app.initialize();
+

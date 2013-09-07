@@ -23,109 +23,54 @@
     </a>
 
     
-<section id="index" data-role="page" data-theme="d">
+<section id="index" data-role="page" data-theme="a">
     <header data-role="header" class="rec-title">
         <h1>为你推荐</h1>
-        <a href="#left-panel" data-icon="bars" data-iconpos="notext" data-shadow="false" data-iconshadow="false">Menu</a>
+        <a href="#left-panel" data-icon="gear" data-iconpos="notext" data-shadow="false" data-iconshadow="false">Menu</a>
     </header>
 
     <article id="content" data-role="content">
         <ul id="rec-list" class="rec-list">
-            <li class="scene">
-                <a href="">
-                    <h3>颐和园</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">1.2km</span>
-                </a>
-            </li>
-            <li class="scene">
-                <a href="">
-                    <h3>什刹海</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">2.2km</span>
-                </a>
-            </li>
-            <li class="scene">
-                <a href="">
-                    <h3>香山公园</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-
-            <li class="hotel">
-                <a href="">
-                    <h3>颐和园</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-            <li class="hotel">
-                <a href="">
-                    <h3>什刹海</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-            <li class="hotel">
-                <a href="">
-                    <h3>香山公园</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-
-            <li class="">
-                <a href="">
-                    <h3>颐和园</h3>
-                    <span class="level">AAAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-            <li class="">
-                <a href="">
-                    <h3>什刹海</h3>
-                    <span class="level">AAA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
-            <li class="">
-                <a href="">
-                    <h3>香山公园</h3>
-                    <span class="level">AA级</span>
-                    <span class="tel">电话：有/无</span>
-                    <span class="distance">3km</span>
-                </a>
-            </li>
+            <li class="no-data-block ui-loading">百度雷达正在探测中...</li>
             
         </ul>
+
+        
 
         <div id="debug"></div>
     </article>
     
-    <div data-role="panel" id="left-panel" data-theme="c">
+    <div data-role="panel" id="left-panel" data-theme="a">
 
         <ul data-role="listview" data-theme="d">
             <li data-icon="delete"><a href="#" data-rel="close">返回</a></li>
-            <li data-role="list-divider">设置</li>
-            <li data-icon="user"><a href="#setting" data-rel="">雷达设置</a></li>
-            <li data-icon="user"><a href="#setting" data-rel="">我的收藏</a></li>
+            <li data-role="list-divider" data-theme="a">设置</li>
+            <li data-icon="arrow-r"><a href="#setting" data-rel="">雷达设置</a></li>
+            <li data-icon="arrow-r"><a href="#setting" data-rel="">我的收藏</a></li>
 
-            <li data-role="list-divider">分类</li>
-            <li data-icon="scene"><a href="#scene" data-rel="page">景点</a></li>
-            <li data-icon="hotel"><a href="#hotel" data-rel="page">酒店</a></li>
-            <li data-icon="station"><a href="#setting" data-rel="page">车站</a></li>
+            <li data-role="list-divider" data-theme="a">分类</li>
+            <li data-icon="arrow-r"><a href="#scene" data-rel="page">景点</a></li>
+            <li data-icon="arrow-r"><a href="#hotel" data-rel="page">酒店</a></li>
+            <li data-icon="arrow-r"><a href="#setting" data-rel="page">车站</a></li>
         </ul>
 
     </div><!-- /panel -->
+        
+</section>
+
+<section id="detail" data-role="page" data-theme="a">
+    <header data-role="header" class="rec-title">
+        <h1>详细信息</h1>
+        <a href="#index" data-icon="back" data-iconpos="notext" data-rel="back" data-shadow="false" data-iconshadow="false">首页</a>
+    </header>
+
+    <article data-role="content">
+        
+    </article>
+
+    <footer data-role="footer" data-position="fixed" data-theme="a">
+        <p>&copy;2013 喵星人</p>
+    </footer>
         
 </section>
 
