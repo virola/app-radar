@@ -8,10 +8,14 @@ window.Location = function(success,fail,act) {
 
 	if (cordova) {
 		cordova.exec(function(pos){
-			console.log(pos);
 			var errcode = pos.LocType;
 			if(errcode == 61 || errcode == 65 || errcode == 161){
-				success(pos);
+				success({
+					lat: pos.Latitude,
+					lng: pos.Longitude,
+					locType: pos.LocType,
+					accuracy: pos.Radius
+				});
 			}else{
 				fail(errcode);
 			}

@@ -22,17 +22,14 @@ var GeoLocation = (function () {
     };
 
     function showLocation(position) {
-        debugMsg('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
+        debugMsg('Latitude: '   + position.lat        + '\n'
+            + 'Longitude: '     + position.lng        + '\n'
+            + 'Speed: '         + position.speed      + '\n'
+            + 'Addr:'           + position.addr
+        );
 
-        location.lat = position.coords.latitude;
-        location.lng = position.coords.longitude;
+        location.lat = position.lat;
+        location.lng = position.lng;
 
         requestData(location);
     }
@@ -72,14 +69,14 @@ var GeoLocation = (function () {
         var data = $.extend(query, {
             location: location.lat + ',' + location.lng
         });
-        $.get(url, data, function (res) {
+        $.getJSON(url, data, function (res) {
             // todo
             if (!res.status) {
                 list = res.results;
 
                 alert(res.results.length);
             }
-        }, 'json');
+        });
 
         console.log(query);
     }
@@ -93,7 +90,7 @@ app.on('deviceready', function () {
     GeoLocation.init();    
 });
 
-app.on('deviceonline', function () {
+app.on('online', function () {
     alert('you are online!');    
 });
 

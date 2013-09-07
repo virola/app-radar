@@ -7,3 +7,16 @@
 @color-grass: #C1F797;
 
 @color-sub: #09c;
+
+
+
+.clearfix() {
+    &:after {
+        clear: both;
+        content: ' ';
+        visibility: hidden;
+        height: 0;
+        font-size: 0;
+        display: block;
+    }
+}

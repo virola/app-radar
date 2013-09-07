@@ -1,8 +1,5 @@
 package com.baidu.plugin.BaiduLoc;
 
-
-
-
 import android.util.Log;
 
 import com.baidu.location.BDLocation;
@@ -27,6 +24,7 @@ public class BaiduLocPlugin extends CordovaPlugin {
 	public MyLocationListenner myListener = new MyLocationListenner();
 		
 	private JSONObject jsonObj = new JSONObject(); 
+	private CallbackContext cbContext;
 	
 	boolean isFinishRun = false;//是否完成UI线程
 
@@ -37,6 +35,7 @@ public class BaiduLocPlugin extends CordovaPlugin {
     ) throws JSONException {
         if (action.equals("get")) {
         	
+        	this.cbContext = callbackContext;
             // test before
         	cordova.getActivity().runOnUiThread(new RunnableLoc());
 
@@ -44,7 +43,6 @@ public class BaiduLocPlugin extends CordovaPlugin {
         }
         else if (action.equals("stop")) {
         	mLocClient.stop();
-        	Log.d("Map", " Plugin execute stop");
             callbackContext.success();
             isFinishRun = true;
             
@@ -89,7 +87,7 @@ public class BaiduLocPlugin extends CordovaPlugin {
             LocationClientOption option = new LocationClientOption();
             option.setOpenGps(true); // 打开gps
             option.setCoorType("bd09ll");     //设置坐标类型
-            option.setScanSpan(3000); // 自动定位时间
+            option.setScanSpan(5000); // 自动定位时间
             
             mLocClient.setLocOption(option);
             mLocClient.start();
@@ -121,11 +119,11 @@ public class BaiduLocPlugin extends CordovaPlugin {
 					jsonObj.put("AddrStr", location.getAddrStr());
 				}
 				
-				String str = "Latitude:" + location.getLatitude() + "\n" 
-						+ "Longitude" + location.getLongitude() + "\n" 
-						+ "LocType" + location.getLocType();
+				// String str = "Latitude:" + location.getLatitude() + "\n" 
+				// 		+ "Longitude" + location.getLongitude() + "\n" 
+				// 		+ "LocType" + location.getLocType();
 				
-				Log.d("requestMapData", str);
+				// Log.d("requestMapData", str);
 				
 	        
 				cbContext.success(jsonObj);

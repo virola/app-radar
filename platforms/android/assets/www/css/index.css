@@ -104,14 +104,27 @@ body {
 .hide {
   display: none;
 }
-#debug {
+#debug:after {
   clear: both;
+  content: ' ';
+  visibility: hidden;
+  height: 0;
+  font-size: 0;
+  display: block;
 }
 #content {
   padding: 0;
 }
 .rec-list {
   width: 100%;
+}
+.rec-list:after {
+  clear: both;
+  content: ' ';
+  visibility: hidden;
+  height: 0;
+  font-size: 0;
+  display: block;
 }
 .rec-list li {
   float: left;

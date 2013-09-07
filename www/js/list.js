@@ -61,29 +61,33 @@ var util = (function () {
 var app = (function() {
     var exports = new util.Observable();
 
+    var events = [
+        'deviceready',
+        'online',
+        'offline',
+        'pause',
+        'resume',
+        'backbutton',
+        'menubutton'
+    ];
+
     exports.initialize = function() {
         bindEvents();
     };
 
     function bindEvents() {
-        document.addEventListener('deviceready', onReady, false);
-        document.addEventListener('online', onOnline, false);
-        document.addEventListener('offline', onOffline, false);
+
+        $.each(events, function (index, evName) {
+            document.addEventListener(evName, bindDocumentEvent(evName), false);
+        });
     }
 
-    function onReady() {
-        console.log('ready');
-        app.fire('deviceready');
-    }
+    function bindDocumentEvent(id) {
 
-    function onOnline() {
-        app.fire('deviceonline');
-        console.log('online');
-    }
-
-    function onOffline() {
-        app.fire('deviceoffline');
-        console.log('offline');
+        return function () {
+            app.fire(id);
+        };
+        
     }
 
     return exports;
@@ -101,10 +105,14 @@ window.Location = function(success,fail,act) {
 
 	if (cordova) {
 		cordova.exec(function(pos){
-			console.log(pos);
 			var errcode = pos.LocType;
 			if(errcode == 61 || errcode == 65 || errcode == 161){
-				success(pos);
+				success({
+					lat: pos.Latitude,
+					lng: pos.Longitude,
+					locType: pos.LocType,
+					accuracy: pos.Radius
+				});
 			}else{
 				fail(errcode);
 			}
@@ -141,17 +149,14 @@ var GeoLocation = (function () {
     };
 
     function showLocation(position) {
-        debugMsg('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
+        debugMsg('Latitude: '   + position.lat        + '\n'
+            + 'Longitude: '     + position.lng        + '\n'
+            + 'Speed: '         + position.speed      + '\n'
+            + 'Addr:'           + position.addr
+        );
 
-        location.lat = position.coords.latitude;
-        location.lng = position.coords.longitude;
+        location.lat = position.lat;
+        location.lng = position.lng;
 
         requestData(location);
     }
@@ -191,14 +196,14 @@ var GeoLocation = (function () {
         var data = $.extend(query, {
             location: location.lat + ',' + location.lng
         });
-        $.get(url, data, function (res) {
+        $.getJSON(url, data, function (res) {
             // todo
             if (!res.status) {
                 list = res.results;
 
                 alert(res.results.length);
             }
-        }, 'json');
+        });
 
         console.log(query);
     }
@@ -212,7 +217,7 @@ app.on('deviceready', function () {
     GeoLocation.init();    
 });
 
-app.on('deviceonline', function () {
+app.on('online', function () {
     alert('you are online!');    
 });
 

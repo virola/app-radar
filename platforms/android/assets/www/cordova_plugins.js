@@ -189,6 +189,13 @@ module.exports = [
         "merges": [
             "navigator.notification"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.core.splashscreen/www/splashscreen.js",
+        "id": "org.apache.cordova.core.splashscreen.SplashScreen",
+        "clobbers": [
+            "navigator.splashscreen"
+        ]
     }
 ]
 });

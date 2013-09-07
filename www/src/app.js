@@ -61,29 +61,33 @@ var util = (function () {
 var app = (function() {
     var exports = new util.Observable();
 
+    var events = [
+        'deviceready',
+        'online',
+        'offline',
+        'pause',
+        'resume',
+        'backbutton',
+        'menubutton'
+    ];
+
     exports.initialize = function() {
         bindEvents();
     };
 
     function bindEvents() {
-        document.addEventListener('deviceready', onReady, false);
-        document.addEventListener('online', onOnline, false);
-        document.addEventListener('offline', onOffline, false);
+
+        $.each(events, function (index, evName) {
+            document.addEventListener(evName, bindDocumentEvent(evName), false);
+        });
     }
 
-    function onReady() {
-        console.log('ready');
-        app.fire('deviceready');
-    }
+    function bindDocumentEvent(id) {
 
-    function onOnline() {
-        app.fire('deviceonline');
-        console.log('online');
-    }
-
-    function onOffline() {
-        app.fire('deviceoffline');
-        console.log('offline');
+        return function () {
+            app.fire(id);
+        };
+        
     }
 
     return exports;

@@ -3,7 +3,7 @@
 app.on('deviceready', function () {
     document.querySelector('.listening').style.display = 'none';
 
-    window.location.href = '#index';
+    $.mobile.navigate('#index');
 });
 
 
@@ -32,17 +32,13 @@ var GeoLocation = (function () {
     };
 
     function showLocation(position) {
-        debugMsg('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
+        debugMsg('Latitude: '   + position.lat        + '<br>'
+            + 'Longitude: '     + position.lng        + '<br>'
+            + 'Accuracy: '      + position.accuracy   + '<br>'
+        );
 
-        location.lat = position.coords.latitude;
-        location.lng = position.coords.longitude;
+        location.lat = position.lat;
+        location.lng = position.lng;
 
         requestData(location);
     }
@@ -57,7 +53,6 @@ var GeoLocation = (function () {
         debugMsg('正在定位中...');
 
         if ( window.Location ) {
-            debugMsg('BaiduLoction...');
             window.Location(onSuccess, onError);
         }
         else {
@@ -69,7 +64,7 @@ var GeoLocation = (function () {
                 });
             }
             else {
-                debugMsg('没有这个功能。。。');
+                debugMsg('没有定位功能呢。。。');
             }
         }
         
@@ -82,16 +77,42 @@ var GeoLocation = (function () {
         var data = $.extend(query, {
             location: location.lat + ',' + location.lng
         });
-        $.get(url, data, function (res) {
+        $.getJSON(url, data, function (res) {
             // todo
             if (!res.status) {
                 list = res.results;
 
                 alert(res.results.length);
             }
-        }, 'json');
+        });
 
         console.log(query);
+
+        bindFrameEvents();
+    }
+
+    function bindFrameEvents() {
+
+        if (window.location.hash == '#index') {
+            var exitTime = 0;
+            var timer;
+
+            app.on('backbutton', function () {
+                exitTime++;
+
+                timer = setTimout( function () {
+                    if (exitTime > 1) {
+                        clearTimeout(timer);
+                        navigator.app.exitApp();
+                    }
+                }, 1000 );
+                
+            });
+
+            app.on('menubutton', function () {
+                $( "#left-panel" ).panel( "toggle" );
+            });
+        }
     }
 
     return exports;
@@ -103,8 +124,17 @@ app.on('deviceready', function () {
     GeoLocation.init();    
 });
 
-app.on('deviceonline', function () {
-    alert('you are online!');    
+app.on('online', function () {
+    // alert('you are online!');    
 });
+
+app.on('offline', function () {
+    // stop lbs
+    window.Location(function(result) {
+        alert('you are offline!');
+    }, function () {}, 'stop');
+});
+
+
 
 app.initialize();
