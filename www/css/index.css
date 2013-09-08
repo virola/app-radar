@@ -13,18 +13,6 @@ body {
   -webkit-user-select: none;
   /* prevent copy paste, to allow, change 'none' to 'text' */
 
-  /*background-color: #E4E4E4;
-    background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image: -webkit-gradient(
-        linear,
-        left top,
-        left bottom,
-        color-stop(0, #A7A7A7),
-        color-stop(0.51, #E4E4E4)
-    );*/
-
   font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
   margin: 0px;
   padding: 0px;
@@ -83,6 +71,9 @@ body {
 }
 .life-bg {
   background: #7dd2d1;
+}
+.groupon-bg {
+  background: #f9c6d5;
 }
 .hide {
   display: none;
@@ -146,7 +137,7 @@ body {
   display: inline;
 }
 .rec-list li a span.distance {
-  color: #0033cc;
+  color: #0066cc;
   position: absolute;
   bottom: .4em;
   right: .4em;
@@ -156,6 +147,9 @@ body {
 }
 .rec-list li.hotel {
   background-color: #ffbded;
+}
+.rec-list li.groupon {
+  background-color: #f9c6d5;
 }
 .rec-list li.food {
   background-color: #ffad26;
@@ -254,6 +248,12 @@ body {
 #main {
   position: absolute;
   z-index: 1;
+  bottom: 0;
+  width: 100%;
+}
+#main #scroller {
+  position: absolute;
+  z-index: 1;
   width: 100%;
 }
 #pull-down,
@@ -313,4 +313,26 @@ body {
 #detail .ui-footer p {
   padding: 0.2em 1em;
   text-align: right;
+}
+#detail #detail-content {
+  color: #8B0506;
+  /*background-color: #E4E4E4;
+        background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -webkit-gradient(
+            linear,
+            left top,
+            left bottom,
+            color-stop(0, #A7A7A7),
+            color-stop(0.51, #E4E4E4)
+        );*/
+
+}
+#detail .place-detail li {
+  line-height: 2em;
+}
+#detail .detail-name {
+  font-size: 2em;
+  line-height: 3em;
 }

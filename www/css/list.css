@@ -60,7 +60,7 @@
   display: inline;
 }
 .rec-list li a span.distance {
-  color: #0033cc;
+  color: #0066cc;
   position: absolute;
   bottom: .4em;
   right: .4em;
@@ -70,6 +70,9 @@
 }
 .rec-list li.hotel {
   background-color: #ffbded;
+}
+.rec-list li.groupon {
+  background-color: #f9c6d5;
 }
 .rec-list li.food {
   background-color: #ffad26;

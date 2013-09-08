@@ -63,8 +63,10 @@ var util = (function () {
             'market'    : '超市',
             'food'      : '餐饮',
             'enjoy'     : '娱乐',
-            'groupon'   : '团购',
-            'life'      : '生活'
+            'hotel'     : '酒店',
+            'life'      : '生活',
+            'groupon'   : '团购'
+            
         },
 
         'typeConfig': {
@@ -72,6 +74,9 @@ var util = (function () {
             'shopping': 'place',
             'market': 'place',
             'food': 'place',
+            'enjoy': 'place',
+            'hotel': 'place',
+            'life' : 'place',
             'groupon': 'tuangou'
         },
 
@@ -213,6 +218,25 @@ window.Location = function(success,fail,act) {
 var indexList = (function () {
     var exports = {};
 
+    exports.init = function () {
+        $('#content li').click(function (e) {
+            var item = $(this);
+            var uid = item.attr('data-id');
+
+            requestDetail(uid);
+        });
+    };
+
+    function requestDetail(uid) {
+        var url = util.getConfig('detailapi');
+
+        util.request(url, {
+            uid: uid
+        }, function (res) {
+            console.log(res);
+        });
+    }
+
     var TPL_ITEM = ''
         + '<li class="#{type}" data-id="#{uid}">'
         +     '<a href="#detail" data-rel="detail">'
@@ -235,7 +259,7 @@ var indexList = (function () {
                 uid: item.uid,
                 name: item.name,
                 distance: unitFormat(item.distance),
-                type: key || '',
+                type: key || curType,
                 tel: item.telephone ? 'tel' : '',
                 coupon: (item.events && item.events.length) ? 'coupon' : ''
             };
@@ -261,18 +285,41 @@ var indexList = (function () {
 
     var currentPage = 0;
 
+    var curType = '';
+
+    exports.setType = function (type) {
+        if ( curType !== type ) {
+            currentPage = 0;
+            curType = type;
+        }
+    };
+
     function loadPage(page, callback) {
 
-        GeoLocation.requestAll(page, function (res) {
-            var list = res.list;
+        if ( curType ) {
+            GeoLocation.requestType({
+                type : curType,
+                page: page
+            }, function (res) {
+                console.log(res);
 
-            var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
-            listContainer.append(ul);
+                // exports.refresh(res.list);
+            });
+        }
+        else {
+            GeoLocation.requestAll(page, function (res) {
+                var list = res.list;
 
-            indexList.append(list, ul);
+                var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
+                listContainer.append(ul);
 
-            callback(res);
-        });
+                indexList.append(list, ul);
+
+                callback(res);
+            });
+        }
+
+        
 
     };
 

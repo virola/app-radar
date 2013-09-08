@@ -21,8 +21,7 @@ module.exports = function (grunt) {
         less: {
             index: {
                 files: {
-                    'www/css/index.css': 'www/less/index.less',
-                    'www/css/list.css': 'www/less/list.less'
+                    'www/css/index.css': 'www/less/index.less'
                 }
             }
 
@@ -36,18 +35,10 @@ module.exports = function (grunt) {
                     'www/src/BaiduLoc.js',
                     'www/src/scroll.js',
                     'www/src/list.js',
+                    'www/src/detail.js',
                     'www/src/index.js'
                 ],
                 dest: 'www/js/index.js'
-            },
-
-            list: {
-                src: [
-                    'www/src/app.js',
-                    'www/src/BaiduLoc.js',
-                    'www/src/list.js'
-                ],
-                dest: 'www/js/list.js'
             }
             
         },
@@ -73,7 +64,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask(
         'index', 
-        ['less:index', 'concat:index', 'concat:list']
+        ['less:index', 'concat:index']
     );
 
     grunt.registerTask(

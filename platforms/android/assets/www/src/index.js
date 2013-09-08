@@ -1,29 +1,9 @@
 
-
-app.on('deviceready', function () {
-    document.querySelector('.listening').style.display = 'none';
-
-    $.mobile.navigate('#index');
-});
-
-
-function debugMsg(msg) {
-    $('#debug').html(msg);
-}
-
-
 // list page
 var GeoLocation = (function () {
     var exports = {};
 
     var QUERY_MAP = util.getConfig('typeMap');
-
-    var query = {
-        type: 'place',
-        query: '餐馆',
-        location: '',
-        radius: '1000'
-    };
 
     var TPL_LOADING = '<li class="no-data-block ui-loading">雷达正在探测中...</li>';
 
@@ -64,13 +44,13 @@ var GeoLocation = (function () {
     }
 
     exports.init = function (mode) {
-        MODE = mode;
+        MODE = mode || '';
 
         $('#rec-list').html(TPL_LOADING);
         exports.refreshPos(function (res) {
-            indexScroll.ready();
-
             indexScroll.init();
+
+            $('#begin-loading').hide();
         });
     };
 
@@ -78,13 +58,11 @@ var GeoLocation = (function () {
     function showLocation(position, callback) {
         callback = callback || new Function();
 
-        location.lat = position.lat;
-        location.lng = position.lng;
+        location.lat = Math.round(position.lat * 100) / 100;
+        location.lng = Math.round(position.lng * 100) / 100;
 
         requestAllData(0, function (res) {
             var list = res.list;
-            console.log(list);
-
             indexList.refresh(list);
 
             callback(res);
@@ -96,27 +74,34 @@ var GeoLocation = (function () {
 
     /**
      * 取某个分类下的数据
-     * 
-     * @param {[type]} type [type description]
-     * @return {[type]} [return description]
      */
-    function requestType(type) {
-        type = type || 'market';
-        var url = util.getConfig('mapapi');
+    function requestType(params, callback) {
+        callback = callback || new Function();
 
+        var type = params.type || '';
+        var page = params.page || 0;
+        var url = util.getConfig('mapapi');
         var mapType = util.getConfig('typeConfig');
+        var queryMap = util.getConfig('typeMap');
+
+        if (!type) {
+            return;
+        }
 
         var data = {
             type: mapType[type],
-            location: location.lat + ',' + location.lng
+            query: queryMap[type],
+            location: location.lat + ',' + location.lng,
+            page_num: page || 0
         };
 
         util.request(url, data, function (res) {
-            console.log(res);
+            callback(res);
         });
     }
 
     exports.requestType = requestType;
+
 
     function requestAllData(page, callback) {
         callback = callback || new Function();
@@ -124,7 +109,7 @@ var GeoLocation = (function () {
         var url = util.getConfig('sumapi');
         var data = {
             location: location.lat + ',' + location.lng,
-            page: page || 0
+            page_num: page || 0
         };
         
 
@@ -136,31 +121,53 @@ var GeoLocation = (function () {
     exports.requestAll = requestAllData;
 
     function bindFrameEvents() {
+        var exitTime = 0;
+        var timer;
 
-        if (window.location.hash == '#index') {
-            var exitTime = 0;
-            var timer;
+        app.on('backbutton', function () {
+            exitTime++;
 
-            app.on('backbutton', function () {
-                exitTime++;
-
-                timer = setTimout( function () {
-                    if (exitTime > 1) {
-                        clearTimeout(timer);
-                        navigator.app.exitApp();
-                    }
-                }, 1000 );
-                
-            });
-
-            app.on('menubutton', function () {
-                $( "#left-panel" ).panel( "toggle" );
-            });
-
-
-            // 翻页请求
+            timer = setTimout( function () {
+                if (exitTime > 1) {
+                    clearTimeout(timer);
+                    navigator.app.exitApp();
+                }
+            }, 1000 );
             
-        }
+        });
+
+        app.on('menubutton', function () {
+            $( "#left-panel" ).panel( "toggle" );
+        });
+
+
+        bindPanels();
+    }
+
+    function bindPanels() {
+        $('#left-panel ul li a').click(function (e) {
+            var me = $(this);
+            var type = me.attr('data-type');
+
+            if (type && me.attr('data-rel') == 'index') {
+                console.log(type);
+
+                indexList.setType(type);
+                requestType({
+                    type : type,
+                    page : 0
+                }, function (res) {
+                    indexList.refresh(res);
+                    indexScroll.refresh();
+
+                    // 收起来左侧栏
+                    $('#left-panel').panel('close');
+                });
+            }
+            else {
+                // nothing
+            }
+        });
     }
 
     return exports;
@@ -193,13 +200,9 @@ app.on('offline', function () {
 $(function () {
     app.initialize();
 
-    $.mobile.loadPage('detail.html', true);
+    // $.mobile.loadPage('detail.html', true);
 
-    $( window ).on( "navigate", function( event, data ) {
-        console.log(data);
-    });
-
-    indexScroll.beforeReady();
+    indexList.init();
 
     indexScroll.on('pullDown', function (obj) {
         var uiScroll = obj.ui;
@@ -218,9 +221,8 @@ $(function () {
             uiScroll.refresh();
         });
     });
+
 });
 
-// test in browser
-GeoLocation.init('browser'); 
-
-
+// // test in browser
+// GeoLocation.init('browser'); 

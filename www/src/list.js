@@ -7,9 +7,21 @@
 var indexList = (function () {
     var exports = {};
 
+    exports.init = function () {
+        $('#content').click(function (e) {
+            var item = e.target;
+            if (item.tagName == 'A') {
+                item = item.parentNode;
+                var uid = item.getAttribute('data-id');
+
+                detail.render(uid);
+            }
+        });
+    };
+
     var TPL_ITEM = ''
         + '<li class="#{type}" data-id="#{uid}">'
-        +     '<a href="#detail" data-rel="detail">'
+        +     '<a href="detail.html?uid=#{uid}" data-rel="page">'
         +         '<h3>#{name}</h3>'
         +         '<span class="#{level}">#{tag}</span>'
         +         '<span class="#{tel}"></span>'
@@ -29,7 +41,7 @@ var indexList = (function () {
                 uid: item.uid,
                 name: item.name,
                 distance: unitFormat(item.distance),
-                type: key || '',
+                type: key || curType,
                 tel: item.telephone ? 'tel' : '',
                 coupon: (item.events && item.events.length) ? 'coupon' : ''
             };
@@ -55,18 +67,41 @@ var indexList = (function () {
 
     var currentPage = 0;
 
+    var curType = '';
+
+    exports.setType = function (type) {
+        if ( curType !== type ) {
+            currentPage = 0;
+            curType = type;
+        }
+    };
+
     function loadPage(page, callback) {
 
-        GeoLocation.requestAll(page, function (res) {
-            var list = res.list;
+        if ( curType ) {
+            GeoLocation.requestType({
+                type : curType,
+                page: page
+            }, function (res) {
+                console.log(res);
 
-            var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
-            listContainer.append(ul);
+                // exports.refresh(res.list);
+            });
+        }
+        else {
+            GeoLocation.requestAll(page, function (res) {
+                var list = res.list;
 
-            indexList.append(list, ul);
+                var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
+                listContainer.append(ul);
 
-            callback(res);
-        });
+                indexList.append(list, ul);
+
+                callback(res);
+            });
+        }
+
+        
 
     };
 

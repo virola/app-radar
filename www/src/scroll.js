@@ -10,12 +10,19 @@ var indexScroll = (function () {
     var downLabel = pullDownEl.querySelector('.pull-down-label');
     var upLabel = pullUpEl.querySelector('.pull-up-label');
 
+    var mainDom = $('#main');
+
     exports.init = function () {
         document.addEventListener('touchmove', function (e) { 
             e.preventDefault(); 
         }, false);
 
         if ( !uiScroll ) {
+            mainDom.css({
+                left: 0,
+                top: $(mainDom).prev().outerHeight()
+            });
+
             initScroll();
         }
     };
@@ -34,12 +41,12 @@ var indexScroll = (function () {
         var pullDownOffset = pullDownEl.offsetHeight;
         var pullUpOffset = pullUpEl.offsetHeight;
 
-        var downText = '上拉刷新列表。。。';
-        var downTextEdge = '释放刷新列表。。。';
+        var downText = '上拉刷新列表...^_^';
+        var downTextEdge = '释放即可刷新...^_~';
 
-        var upText = '下拉加载更多。。。';
+        var upText = '下拉加载更多...^_~';
 
-        var loadingText = '加载请稍后。。。';
+        var loadingText = '正在加载请稍后...O_O';
         
         uiScroll = new iScroll('main', {
             useTransition: true,
@@ -62,7 +69,7 @@ var indexScroll = (function () {
                     pullDownEl.className = '';
                     downLabel.innerHTML = downText;
                     this.minScrollY = -pullDownOffset;
-                } else if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
+                } else if (this.y > 0 && this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
                     pullUpEl.className = 'flip';
                     upLabel.innerHTML = downTextEdge;
                     this.maxScrollY = this.maxScrollY;
@@ -73,28 +80,21 @@ var indexScroll = (function () {
                 }
             },
             onScrollEnd: function () {
+
                 if (pullDownEl.className.match('flip')) {
                     pullDownEl.className = 'loading';
                     downLabel.innerHTML = loadingText;                
-                    pullDownAction();   // Execute custom function (ajax call?)
+                    pullDownAction();   
                 } else if (pullUpEl.className.match('flip')) {
                     pullUpEl.className = 'loading';
                     upLabel.innerHTML = loadingText;                
-                    pullUpAction(); // Execute custom function (ajax call?)
+                    pullUpAction(); 
                 }
             }
         });
-        
-        // setTimeout(function () { 
-        //     document.getElementById('wrapper').style.left = '0'; 
-        // }, 800);
     }
 
-
-    var generatedCount = 0;
-
     function pullDownAction() {
-
         exports.fire('pullDown', {
             ui: uiScroll
         });
@@ -102,12 +102,15 @@ var indexScroll = (function () {
     }
 
     function pullUpAction () {
-
         exports.fire('pullUp', {
             ui: uiScroll
         });
 
     }
+
+    exports.refresh = function () {
+        uiScroll.refresh();
+    };
 
 
     return exports;

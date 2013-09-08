@@ -63,8 +63,10 @@ var util = (function () {
             'market'    : '超市',
             'food'      : '餐饮',
             'enjoy'     : '娱乐',
-            'groupon'   : '团购',
-            'life'      : '生活'
+            'hotel'     : '酒店',
+            'life'      : '生活',
+            'groupon'   : '团购'
+            
         },
 
         'typeConfig': {
@@ -72,6 +74,9 @@ var util = (function () {
             'shopping': 'place',
             'market': 'place',
             'food': 'place',
+            'enjoy': 'place',
+            'hotel': 'place',
+            'life' : 'place',
             'groupon': 'tuangou'
         },
 
@@ -101,7 +106,7 @@ var util = (function () {
         }).done(function(res) {
             if (!res.status) {
 
-                callback(res.results);
+                callback(res.results || res.result);
             }
         });
     }
@@ -158,6 +163,12 @@ var app = (function() {
 
         $.each(events, function (index, evName) {
             document.addEventListener(evName, bindDocumentEvent(evName), false);
+        });
+
+        $(document).bind('pagechange', function (event, data) {
+            console.log(data);
+            var url = $.mobile.path.parseUrl(data.absUrl);
+            app.fire('pagechange', url);
         });
     }
 

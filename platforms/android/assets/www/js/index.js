@@ -63,8 +63,10 @@ var util = (function () {
             'market'    : '超市',
             'food'      : '餐饮',
             'enjoy'     : '娱乐',
-            'groupon'   : '团购',
-            'life'      : '生活'
+            'hotel'     : '酒店',
+            'life'      : '生活',
+            'groupon'   : '团购'
+            
         },
 
         'typeConfig': {
@@ -72,6 +74,9 @@ var util = (function () {
             'shopping': 'place',
             'market': 'place',
             'food': 'place',
+            'enjoy': 'place',
+            'hotel': 'place',
+            'life' : 'place',
             'groupon': 'tuangou'
         },
 
@@ -101,7 +106,7 @@ var util = (function () {
         }).done(function(res) {
             if (!res.status) {
 
-                callback(res.results);
+                callback(res.results || res.result);
             }
         });
     }
@@ -158,6 +163,12 @@ var app = (function() {
 
         $.each(events, function (index, evName) {
             document.addEventListener(evName, bindDocumentEvent(evName), false);
+        });
+
+        $(document).bind('pagechange', function (event, data) {
+            console.log(data);
+            var url = $.mobile.path.parseUrl(data.absUrl);
+            app.fire('pagechange', url);
         });
     }
 
@@ -216,12 +227,19 @@ var indexScroll = (function () {
     var downLabel = pullDownEl.querySelector('.pull-down-label');
     var upLabel = pullUpEl.querySelector('.pull-up-label');
 
+    var mainDom = $('#main');
+
     exports.init = function () {
         document.addEventListener('touchmove', function (e) { 
             e.preventDefault(); 
         }, false);
 
         if ( !uiScroll ) {
+            mainDom.css({
+                left: 0,
+                top: $(mainDom).prev().outerHeight()
+            });
+
             initScroll();
         }
     };
@@ -240,12 +258,12 @@ var indexScroll = (function () {
         var pullDownOffset = pullDownEl.offsetHeight;
         var pullUpOffset = pullUpEl.offsetHeight;
 
-        var downText = '上拉刷新列表。。。';
-        var downTextEdge = '释放刷新列表。。。';
+        var downText = '上拉刷新列表...^_^';
+        var downTextEdge = '释放即可刷新...^_~';
 
-        var upText = '下拉加载更多。。。';
+        var upText = '下拉加载更多...^_~';
 
-        var loadingText = '加载请稍后。。。';
+        var loadingText = '正在加载请稍后...O_O';
         
         uiScroll = new iScroll('main', {
             useTransition: true,
@@ -268,7 +286,7 @@ var indexScroll = (function () {
                     pullDownEl.className = '';
                     downLabel.innerHTML = downText;
                     this.minScrollY = -pullDownOffset;
-                } else if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
+                } else if (this.y > 0 && this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
                     pullUpEl.className = 'flip';
                     upLabel.innerHTML = downTextEdge;
                     this.maxScrollY = this.maxScrollY;
@@ -279,28 +297,21 @@ var indexScroll = (function () {
                 }
             },
             onScrollEnd: function () {
+
                 if (pullDownEl.className.match('flip')) {
                     pullDownEl.className = 'loading';
                     downLabel.innerHTML = loadingText;                
-                    pullDownAction();   // Execute custom function (ajax call?)
+                    pullDownAction();   
                 } else if (pullUpEl.className.match('flip')) {
                     pullUpEl.className = 'loading';
                     upLabel.innerHTML = loadingText;                
-                    pullUpAction(); // Execute custom function (ajax call?)
+                    pullUpAction(); 
                 }
             }
         });
-        
-        // setTimeout(function () { 
-        //     document.getElementById('wrapper').style.left = '0'; 
-        // }, 800);
     }
 
-
-    var generatedCount = 0;
-
     function pullDownAction() {
-
         exports.fire('pullDown', {
             ui: uiScroll
         });
@@ -308,12 +319,15 @@ var indexScroll = (function () {
     }
 
     function pullUpAction () {
-
         exports.fire('pullUp', {
             ui: uiScroll
         });
 
     }
+
+    exports.refresh = function () {
+        uiScroll.refresh();
+    };
 
 
     return exports;
@@ -329,9 +343,21 @@ var indexScroll = (function () {
 var indexList = (function () {
     var exports = {};
 
+    exports.init = function () {
+        $('#content').click(function (e) {
+            var item = e.target;
+            if (item.tagName == 'A') {
+                item = item.parentNode;
+                var uid = item.getAttribute('data-id');
+
+                detail.render(uid);
+            }
+        });
+    };
+
     var TPL_ITEM = ''
         + '<li class="#{type}" data-id="#{uid}">'
-        +     '<a href="#detail" data-rel="detail">'
+        +     '<a href="detail.html?uid=#{uid}" data-rel="page">'
         +         '<h3>#{name}</h3>'
         +         '<span class="#{level}">#{tag}</span>'
         +         '<span class="#{tel}"></span>'
@@ -351,7 +377,7 @@ var indexList = (function () {
                 uid: item.uid,
                 name: item.name,
                 distance: unitFormat(item.distance),
-                type: key || '',
+                type: key || curType,
                 tel: item.telephone ? 'tel' : '',
                 coupon: (item.events && item.events.length) ? 'coupon' : ''
             };
@@ -377,18 +403,41 @@ var indexList = (function () {
 
     var currentPage = 0;
 
+    var curType = '';
+
+    exports.setType = function (type) {
+        if ( curType !== type ) {
+            currentPage = 0;
+            curType = type;
+        }
+    };
+
     function loadPage(page, callback) {
 
-        GeoLocation.requestAll(page, function (res) {
-            var list = res.list;
+        if ( curType ) {
+            GeoLocation.requestType({
+                type : curType,
+                page: page
+            }, function (res) {
+                console.log(res);
 
-            var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
-            listContainer.append(ul);
+                // exports.refresh(res.list);
+            });
+        }
+        else {
+            GeoLocation.requestAll(page, function (res) {
+                var list = res.list;
 
-            indexList.append(list, ul);
+                var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
+                listContainer.append(ul);
 
-            callback(res);
-        });
+                indexList.append(list, ul);
+
+                callback(res);
+            });
+        }
+
+        
 
     };
 
@@ -420,32 +469,88 @@ var indexList = (function () {
     return exports;
 })();
 
+/**
+ * 详情页模块
+ * 
+ * @type {Object}
+ */
+var detail = (function () {
+    var exports = {};
 
+    var url = util.getConfig('detailapi');
 
-app.on('deviceready', function () {
-    document.querySelector('.listening').style.display = 'none';
+    var container;
 
-    $.mobile.navigate('#index');
+    exports.init = function () {
+        container = $('#detail-content');
+
+        if (container && cacheData) {
+            repaint(cacheData);
+        }
+    };
+
+    var curUid = '';
+
+    function requestDetail() {
+
+        util.request(url, { uid: curUid }, function (res) {
+            repaint(res);
+        });
+    }
+
+    exports.render = function (uid) {
+        curUid = uid;
+        requestDetail();
+    };
+
+    var PAGE_TPL = ''
+        + '<ul class="place-detail">'
+        +     '<li class="detail-name">#{name}</li>'
+        +     '<li>'
+        +         '<label>电话：</label>'
+        +         '<span><a href="tel:#{telephone}">#{telephone}</a></span>'
+        +     '</li>'
+        +     '<li><label>地址：</label><span>#{address}</span></li>'
+        + '</ul>';
+
+    var cacheData;
+
+    function repaint(data) {
+        // todo
+        var html = util.format(PAGE_TPL, data);
+
+        if (container) {
+            container.html(html);
+            cacheData = null;
+        }
+        else {
+            cacheData = data;
+        }
+    }
+
+    exports.clear = function () {
+        container = null;
+        cacheData = null;
+    };
+
+    return exports;
+})();
+
+app.on('pagechange', function (params) {
+
+    if (params.filename == 'detail.html') {
+        detail.init();
+    }
+    else {
+        detail.clear();
+    }
 });
-
-
-function debugMsg(msg) {
-    $('#debug').html(msg);
-}
-
 
 // list page
 var GeoLocation = (function () {
     var exports = {};
 
     var QUERY_MAP = util.getConfig('typeMap');
-
-    var query = {
-        type: 'place',
-        query: '餐馆',
-        location: '',
-        radius: '1000'
-    };
 
     var TPL_LOADING = '<li class="no-data-block ui-loading">雷达正在探测中...</li>';
 
@@ -486,13 +591,13 @@ var GeoLocation = (function () {
     }
 
     exports.init = function (mode) {
-        MODE = mode;
+        MODE = mode || '';
 
         $('#rec-list').html(TPL_LOADING);
         exports.refreshPos(function (res) {
-            indexScroll.ready();
-
             indexScroll.init();
+
+            $('#begin-loading').hide();
         });
     };
 
@@ -500,13 +605,11 @@ var GeoLocation = (function () {
     function showLocation(position, callback) {
         callback = callback || new Function();
 
-        location.lat = position.lat;
-        location.lng = position.lng;
+        location.lat = Math.round(position.lat * 100) / 100;
+        location.lng = Math.round(position.lng * 100) / 100;
 
         requestAllData(0, function (res) {
             var list = res.list;
-            console.log(list);
-
             indexList.refresh(list);
 
             callback(res);
@@ -518,27 +621,34 @@ var GeoLocation = (function () {
 
     /**
      * 取某个分类下的数据
-     * 
-     * @param {[type]} type [type description]
-     * @return {[type]} [return description]
      */
-    function requestType(type) {
-        type = type || 'market';
-        var url = util.getConfig('mapapi');
+    function requestType(params, callback) {
+        callback = callback || new Function();
 
+        var type = params.type || '';
+        var page = params.page || 0;
+        var url = util.getConfig('mapapi');
         var mapType = util.getConfig('typeConfig');
+        var queryMap = util.getConfig('typeMap');
+
+        if (!type) {
+            return;
+        }
 
         var data = {
             type: mapType[type],
-            location: location.lat + ',' + location.lng
+            query: queryMap[type],
+            location: location.lat + ',' + location.lng,
+            page_num: page || 0
         };
 
         util.request(url, data, function (res) {
-            console.log(res);
+            callback(res);
         });
     }
 
     exports.requestType = requestType;
+
 
     function requestAllData(page, callback) {
         callback = callback || new Function();
@@ -546,7 +656,7 @@ var GeoLocation = (function () {
         var url = util.getConfig('sumapi');
         var data = {
             location: location.lat + ',' + location.lng,
-            page: page || 0
+            page_num: page || 0
         };
         
 
@@ -558,31 +668,53 @@ var GeoLocation = (function () {
     exports.requestAll = requestAllData;
 
     function bindFrameEvents() {
+        var exitTime = 0;
+        var timer;
 
-        if (window.location.hash == '#index') {
-            var exitTime = 0;
-            var timer;
+        app.on('backbutton', function () {
+            exitTime++;
 
-            app.on('backbutton', function () {
-                exitTime++;
-
-                timer = setTimout( function () {
-                    if (exitTime > 1) {
-                        clearTimeout(timer);
-                        navigator.app.exitApp();
-                    }
-                }, 1000 );
-                
-            });
-
-            app.on('menubutton', function () {
-                $( "#left-panel" ).panel( "toggle" );
-            });
-
-
-            // 翻页请求
+            timer = setTimout( function () {
+                if (exitTime > 1) {
+                    clearTimeout(timer);
+                    navigator.app.exitApp();
+                }
+            }, 1000 );
             
-        }
+        });
+
+        app.on('menubutton', function () {
+            $( "#left-panel" ).panel( "toggle" );
+        });
+
+
+        bindPanels();
+    }
+
+    function bindPanels() {
+        $('#left-panel ul li a').click(function (e) {
+            var me = $(this);
+            var type = me.attr('data-type');
+
+            if (type && me.attr('data-rel') == 'index') {
+                console.log(type);
+
+                indexList.setType(type);
+                requestType({
+                    type : type,
+                    page : 0
+                }, function (res) {
+                    indexList.refresh(res);
+                    indexScroll.refresh();
+
+                    // 收起来左侧栏
+                    $('#left-panel').panel('close');
+                });
+            }
+            else {
+                // nothing
+            }
+        });
     }
 
     return exports;
@@ -615,13 +747,9 @@ app.on('offline', function () {
 $(function () {
     app.initialize();
 
-    $.mobile.loadPage('detail.html', true);
+    // $.mobile.loadPage('detail.html', true);
 
-    $( window ).on( "navigate", function( event, data ) {
-        console.log(data);
-    });
-
-    indexScroll.beforeReady();
+    indexList.init();
 
     indexScroll.on('pullDown', function (obj) {
         var uiScroll = obj.ui;
@@ -640,9 +768,8 @@ $(function () {
             uiScroll.refresh();
         });
     });
+
 });
 
-// test in browser
-GeoLocation.init('browser'); 
-
-
+// // test in browser
+// GeoLocation.init('browser'); 

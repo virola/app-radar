@@ -15,15 +15,6 @@
     <title>百度雷达</title>
 </head>
 
-<!--  <a id="setup" class="app" data-role="page" href="#index">
-    <div class="blink">
-        <p class="event listening">正在启动程序...</p>
-    </div>
-
-    <div id="geolocation"></div>
-</a> -->
-
-    
 <section id="index" data-role="page" data-theme="a">
     <header data-role="header" class="rec-title">
         <h1>为你推荐</h1>
@@ -38,12 +29,16 @@
             </div>
             <section id="content">
                 <ul id="rec-list" class="rec-list">
-                    
+                    <li class="no-data-block ui-loading">雷达正在探测中...</li>
                 </ul>
             </section>
             <div id="pull-up">
                 <span class="pull-up-icon"></span><span class="pull-up-label">加载更多...</span>
             </div>
+        </div>
+
+        <div id="begin-loading">
+            <div class="no-data-block ui-loading">雷达正在探测中...</div>
         </div>
     </article>
     
@@ -57,12 +52,13 @@
 
             <li data-role="list-divider" data-theme="a">分类</li>
             <li data-icon="arrow-r" class="scene-bg"><a href="#index" data-type="scene" data-rel="index">景点</a></li>
-            <li data-icon="arrow-r" class="food-bg"><a href="#index" data-rel="index">美食</a></li>
-            <li data-icon="arrow-r" class="hotel-bg"><a href="#index" data-rel="index">酒店</a></li>
-            <li data-icon="arrow-r" class="market-bg"><a href="#index" data-rel="index">超市</a></li>
+            <li data-icon="arrow-r" class="food-bg"><a href="#index" data-type="food" data-rel="index">美食</a></li>
+            <li data-icon="arrow-r" class="hotel-bg"><a href="#index" data-type="hotel" data-rel="index">酒店</a></li>
+            <li data-icon="arrow-r" class="market-bg"><a href="#index" data-type="market" data-rel="index">超市</a></li>
             <li data-icon="arrow-r" class="life-bg"><a href="#index" data-type="life" data-rel="index">生活</a></li>
             <li data-icon="arrow-r" class="shopping-bg"><a href="#index" data-type="shopping" data-rel="index">购物</a></li>
             <li data-icon="arrow-r" class="enjoy-bg"><a href="#index" data-type="enjoy" data-rel="index">娱乐</a></li>
+            <li data-icon="arrow-r" class="groupon-bg"><a href="#index" data-type="groupon" data-rel="index">团购</a></li>
         </ul>
 
     </div><!-- /panel -->
