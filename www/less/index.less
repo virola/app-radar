@@ -4,6 +4,10 @@ body {
     background: #160c0a;
 }
 
+#index-header {
+    z-index: 100;
+}
+
 .blink {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
@@ -37,6 +41,16 @@ body {
 
 .groupon-bg {
     background: @groupon-color;
+}
+
+.no-data-block {
+    background: none;
+    width: 100%;
+    text-align: center;
+    float: none;
+    color: #999;
+    font-size: 1.5em;
+    line-height: 6em;
 }
 
 @import 'list';

@@ -201,6 +201,8 @@ $(function () {
     app.initialize();
 
     // $.mobile.loadPage('detail.html', true);
+    
+    $.mobile.defaultTransition = 'none';
 
     indexList.init();
 
@@ -225,4 +227,6 @@ $(function () {
 });
 
 // // test in browser
-// GeoLocation.init('browser'); 
+GeoLocation.init('browser'); 
+
+

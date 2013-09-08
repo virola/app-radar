@@ -16,30 +16,34 @@
 </head>
 
 <section id="index" data-role="page" data-theme="a">
-    <header data-role="header" class="rec-title">
+    <header id="index-header" data-role="header" class="rec-title">
         <h1>为你推荐</h1>
         <a href="#left-panel" data-icon="gear" data-iconpos="notext" data-shadow="false" data-iconshadow="false">Menu</a>
     </header>
 
-    <article id="main" class="main" data-role="content">
-        <div id="scroller" class="scroller">
-            <div id="pull-down">
-                <span class="pull-down-icon"></span>
-                <span class="pull-down-label">下拉刷新周边列表</span>
-            </div>
-            <section id="content">
-                <ul id="rec-list" class="rec-list">
-                    <li class="no-data-block ui-loading">雷达正在探测中...</li>
-                </ul>
-            </section>
-            <div id="pull-up">
-                <span class="pull-up-icon"></span><span class="pull-up-label">加载更多...</span>
-            </div>
-        </div>
-
+    <article id="index-main" class="main" data-role="content">
         <div id="begin-loading">
             <div class="no-data-block ui-loading">雷达正在探测中...</div>
         </div>
+
+        <section id="main">
+            <div id="scroller" class="scroller">
+                <div id="pull-down">
+                    <span class="pull-down-icon"></span>
+                    <span class="pull-down-label">下拉刷新周边列表</span>
+                </div>
+                <section id="content">
+                    <ul id="rec-list" class="rec-list">
+                        <li class="no-data-block ui-loading">雷达正在探测中...</li>
+                    </ul>
+                </section>
+                <div id="pull-up">
+                    <span class="pull-up-icon"></span><span class="pull-up-label">加载更多...</span>
+                </div>
+            </div>
+        </section>
+
+        
     </article>
     
     <div data-role="panel" id="left-panel" data-theme="a">

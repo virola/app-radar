@@ -237,7 +237,7 @@ var indexScroll = (function () {
         if ( !uiScroll ) {
             mainDom.css({
                 left: 0,
-                top: $(mainDom).prev().outerHeight()
+                top: $('#index-header').outerHeight()
             });
 
             initScroll();
@@ -286,7 +286,7 @@ var indexScroll = (function () {
                     pullDownEl.className = '';
                     downLabel.innerHTML = downText;
                     this.minScrollY = -pullDownOffset;
-                } else if (this.y > 0 && this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
+                } else if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
                     pullUpEl.className = 'flip';
                     upLabel.innerHTML = downTextEdge;
                     this.maxScrollY = this.maxScrollY;
@@ -748,6 +748,8 @@ $(function () {
     app.initialize();
 
     // $.mobile.loadPage('detail.html', true);
+    
+    $.mobile.defaultTransition = 'none';
 
     indexList.init();
 
@@ -772,4 +774,6 @@ $(function () {
 });
 
 // // test in browser
-// GeoLocation.init('browser'); 
+GeoLocation.init('browser'); 
+
+
