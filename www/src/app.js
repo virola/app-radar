@@ -50,10 +50,12 @@ var util = (function () {
 
     exports.Observable = Observable;
 
-    var CONFIG = {
-        'mapapi': 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php',
+    var MAPAPI = 'http://miao215.duapp.com/map/index.php';
 
-        'sumapi': 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php?type=sum',
+    var CONFIG = {
+        'mapapi': MAPAPI,
+        'sumapi': MAPAPI + '?type=sum',
+        'detailapi': MAPAPI + '?type=placedetail',
 
         'typeMap': {
             'scene'     : '景点',
@@ -161,8 +163,8 @@ var app = (function() {
 
     function bindDocumentEvent(id) {
 
-        return function () {
-            app.fire(id);
+        return function (e) {
+            app.fire(id, e);
         };
         
     }

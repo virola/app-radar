@@ -5,10 +5,11 @@
 }
 
 #debug {
+    display: none;
     .clearfix();
 }
 
-#content {
+.main {
     padding: 0;
 }
 
@@ -25,14 +26,16 @@
             position: relative;
             display: block;
             border: 1px solid #FFF;
-            height: 4em;
-            padding: 0.1em;
+            border-left: 0;
+            border-bottom: 0;
+            height: 5em;
+            padding: .1em .3em;
             color: #000;
             text-shadow: 0 0 0;
             text-decoration: none;
             
             h3 {
-                font-size: 1.2em;
+                font-size: 1.1em;
                 line-height: 1.5em;
                 color: #000;
             }
@@ -41,18 +44,15 @@
                 display: none;
                 color: #666;
 
-                &.level, &.tel, &.distance {
+                &.level, &.tel, &.distance, &.coupon {
                     display: inline;
                 }
 
                 &.distance {
-                    text-align: right;
-                    display: block;
                     color: @color-sub;
-                    padding-right: 0.4em;
-                    /*position: absolute;
-                    top: 1em;
-                    right: 1em;*/
+                    position: absolute;
+                    bottom: .4em;
+                    right: .4em;
                 }
             }
         }
@@ -63,6 +63,39 @@
 
         &.hotel {
             background-color: @color-pink;
+        }
+
+        &.food {
+            background-color: @food-color;
+        }
+
+        &.enjoy {
+            background-color: @enjoy-color;
+        }
+        &.market {
+            background-color: @market-color;
+        }
+        &.shopping {
+            background-color: @shopping-color;
+        }
+
+        &.life {
+            background-color: @life-color;
+        }
+
+        &.no-data-block, &.data-end-block {
+            background: none;
+            width: 100%;
+            text-align: center;
+            float: none;
+            color: #999;
+            font-size: 1.5em;
+            line-height: 6em;
+        }
+
+        &.data-end-block {
+            height: 1.5em;
+            line-height: 1;
         }
     }
 

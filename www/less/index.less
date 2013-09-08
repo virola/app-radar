@@ -4,42 +4,38 @@ body {
     background: #160c0a;
 }
 
-.app {
-    display: block;
-    background: #160c0a url(../img/logo.png) no-repeat center 30px;
-    text-align: center;
-    height: 100%;
-    min-height: 420px;
-
-    div {
-        position: absolute;
-        width: 100%;
-        bottom: 30px;
-        color: #fff;
-        text-shadow: 0;
-
-        a {
-            color: #FFF;
-        }
-    }
-}
-
-@keyframes fade {
-    from { opacity: 1.0; }
-    50% { opacity: 0.4; }
-    to { opacity: 1.0; }
-}
- 
-@-webkit-keyframes fade {
-    from { opacity: 1.0; }
-    50% { opacity: 0.4; }
-    to { opacity: 1.0; }
-}
-
 .blink {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
 
+.scene-bg {
+    background: @scene-color;
+}
+
+.hotel-bg {
+    background: @color-pink;
+}
+
+.food-bg {
+    background: @food-color;
+}
+
+.enjoy-bg {
+    background: @enjoy-color;
+}
+.market-bg {
+    background: @market-color;
+}
+.shopping-bg {
+    background: @shopping-color;
+}
+
+.life-bg {
+    background: @life-color;
+}
+
 @import 'list';
+@import 'scroll';
+
 @import 'detail';

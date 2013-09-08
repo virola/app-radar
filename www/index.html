@@ -9,18 +9,19 @@
     <link rel="stylesheet" type="text/css" href="./dep/jquery-mobile/jquery.mobile.theme-1.3.2.min.css">
     <script src="./dep/jquery/jquery.js"></script>
     <script src="./dep/jquery-mobile/jquery.mobile-1.3.2.min.js"></script>
+    <script src="./dep/iscroll/iscroll.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <title>百度雷达</title>
 </head>
 
-    <a id="setup" class="app" data-role="page" href="#index">
-        <div class="blink">
-            <p class="event listening">正在启动程序...</p>
-        </div>
+<!--  <a id="setup" class="app" data-role="page" href="#index">
+    <div class="blink">
+        <p class="event listening">正在启动程序...</p>
+    </div>
 
-        <div id="geolocation"></div>
-    </a>
+    <div id="geolocation"></div>
+</a> -->
 
     
 <section id="index" data-role="page" data-theme="a">
@@ -29,15 +30,21 @@
         <a href="#left-panel" data-icon="gear" data-iconpos="notext" data-shadow="false" data-iconshadow="false">Menu</a>
     </header>
 
-    <article id="content" data-role="content">
-        <ul id="rec-list" class="rec-list">
-            <li class="no-data-block ui-loading">百度雷达正在探测中...</li>
-            
-        </ul>
-
-        
-
-        <div id="debug"></div>
+    <article id="main" class="main" data-role="content">
+        <div id="scroller" class="scroller">
+            <div id="pull-down">
+                <span class="pull-down-icon"></span>
+                <span class="pull-down-label">下拉刷新周边列表</span>
+            </div>
+            <section id="content">
+                <ul id="rec-list" class="rec-list">
+                    
+                </ul>
+            </section>
+            <div id="pull-up">
+                <span class="pull-up-icon"></span><span class="pull-up-label">加载更多...</span>
+            </div>
+        </div>
     </article>
     
     <div data-role="panel" id="left-panel" data-theme="a">
@@ -45,32 +52,20 @@
         <ul data-role="listview" data-theme="d">
             <li data-icon="delete"><a href="#" data-rel="close">返回</a></li>
             <li data-role="list-divider" data-theme="a">设置</li>
-            <li data-icon="arrow-r"><a href="#setting" data-rel="">雷达设置</a></li>
-            <li data-icon="arrow-r"><a href="#setting" data-rel="">我的收藏</a></li>
+            <li data-icon="arrow-r"><a href="#setting" data-rel="setting.html">雷达设置</a></li>
+            <!-- <li data-icon="arrow-r"><a href="#setting" data-rel="">我的收藏</a></li> -->
 
             <li data-role="list-divider" data-theme="a">分类</li>
-            <li data-icon="arrow-r"><a href="#scene" data-rel="page">景点</a></li>
-            <li data-icon="arrow-r"><a href="#hotel" data-rel="page">酒店</a></li>
-            <li data-icon="arrow-r"><a href="#setting" data-rel="page">车站</a></li>
+            <li data-icon="arrow-r" class="scene-bg"><a href="#index" data-type="scene" data-rel="index">景点</a></li>
+            <li data-icon="arrow-r" class="food-bg"><a href="#index" data-rel="index">美食</a></li>
+            <li data-icon="arrow-r" class="hotel-bg"><a href="#index" data-rel="index">酒店</a></li>
+            <li data-icon="arrow-r" class="market-bg"><a href="#index" data-rel="index">超市</a></li>
+            <li data-icon="arrow-r" class="life-bg"><a href="#index" data-type="life" data-rel="index">生活</a></li>
+            <li data-icon="arrow-r" class="shopping-bg"><a href="#index" data-type="shopping" data-rel="index">购物</a></li>
+            <li data-icon="arrow-r" class="enjoy-bg"><a href="#index" data-type="enjoy" data-rel="index">娱乐</a></li>
         </ul>
 
     </div><!-- /panel -->
-        
-</section>
-
-<section id="detail" data-role="page" data-theme="a">
-    <header data-role="header" class="rec-title">
-        <h1>详细信息</h1>
-        <a href="#index" data-icon="back" data-iconpos="notext" data-rel="back" data-shadow="false" data-iconshadow="false">首页</a>
-    </header>
-
-    <article data-role="content">
-        
-    </article>
-
-    <footer data-role="footer" data-position="fixed" data-theme="a">
-        <p>&copy;2013 喵星人</p>
-    </footer>
         
 </section>
 

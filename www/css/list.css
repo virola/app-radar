@@ -12,7 +12,7 @@
   font-size: 0;
   display: block;
 }
-#content {
+.main {
   padding: 0;
 }
 .rec-list {
@@ -35,14 +35,16 @@
   position: relative;
   display: block;
   border: 1px solid #FFF;
-  height: 4em;
-  padding: 0.1em;
+  border-left: 0;
+  border-bottom: 0;
+  height: 5em;
+  padding: .1em .3em;
   color: #000;
   text-shadow: 0 0 0;
   text-decoration: none;
 }
 .rec-list li a h3 {
-  font-size: 1.2em;
+  font-size: 1.1em;
   line-height: 1.5em;
   color: #000;
 }
@@ -58,7 +60,7 @@
   display: inline;
 }
 .rec-list li a span.distance {
-  color: #0099cc;
+  color: #0033cc;
   position: absolute;
   bottom: .4em;
   right: .4em;
@@ -79,7 +81,7 @@
   background-color: #c1f797;
 }
 .rec-list li.shopping {
-  background-color: #ac4e83;
+  background-color: #ec7ebc;
 }
 .rec-list li.life {
   background-color: #7dd2d1;

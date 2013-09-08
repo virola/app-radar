@@ -25,55 +25,74 @@ var GeoLocation = (function () {
         radius: '1000'
     };
 
+    var TPL_LOADING = '<li class="no-data-block ui-loading">雷达正在探测中...</li>';
+
     var location = {};
 
-    var onSuccess = function(position) {
-        showLocation(position);
+    var MODE = '';
+
+    exports.refreshPos = function (callback) {
+        callback = callback || new Function();
+
+        if ( MODE != 'browser' && window.Location ) {
+            window.Location(function (pos) {
+                showLocation(pos, callback);
+            }, onError);
+        }
+        else {
+            if ( navigator.geolocation ) {
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    showLocation({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy
+                        }, callback);
+
+                    
+                }, onError);
+            }
+            else {
+                alert('没有定位功能呢。。。');
+            }
+        }
     };
-
-    function showLocation(position) {
-        debugMsg('Latitude: '   + position.lat        + '<br>'
-            + 'Longitude: '     + position.lng        + '<br>'
-            + 'Accuracy: '      + position.accuracy   + '<br>'
-        );
-
-        location.lat = position.lat;
-        location.lng = position.lng;
-
-        requestAllData(location);
-
-        bindFrameEvents();
-    }
 
     function onError(error) {
 
-        debugMsg('code: '    + error.code    + '\n' +
+        alert('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
 
     exports.init = function (mode) {
-        debugMsg('正在定位中...');
+        MODE = mode;
 
-        if ( mode != 'browser' && window.Location ) {
-            window.Location(onSuccess, onError);
-        }
-        else {
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition(function (loc) {
-                    onSuccess({
-                        lat: loc.coords.latitude,
-                        lng: loc.coords.longitude,
-                        accuracy: loc.coords.accuracy
-                    });
-                }, onError);
-            }
-            else {
-                debugMsg('没有定位功能呢。。。');
-            }
-        }
-        
-        
+        $('#rec-list').html(TPL_LOADING);
+        exports.refreshPos(function (res) {
+            indexScroll.ready();
+
+            indexScroll.init();
+        });
     };
+
+
+    function showLocation(position, callback) {
+        callback = callback || new Function();
+
+        location.lat = position.lat;
+        location.lng = position.lng;
+
+        requestAllData(0, function (res) {
+            var list = res.list;
+            console.log(list);
+
+            indexList.refresh(list);
+
+            callback(res);
+            
+        });
+
+        bindFrameEvents();
+    }
 
     /**
      * 取某个分类下的数据
@@ -99,21 +118,18 @@ var GeoLocation = (function () {
 
     exports.requestType = requestType;
 
-    function requestAllData(loc, page) {
+    function requestAllData(page, callback) {
+        callback = callback || new Function();
+
         var url = util.getConfig('sumapi');
         var data = {
-            location: loc.lat + ',' + loc.lng,
+            location: location.lat + ',' + location.lng,
             page: page || 0
         };
         
 
         util.request(url, data, function (res) {
-            var group = res.tuangou;
-            var place = res.place;
-            var list = res.list;
-            console.log(list);
-
-            indexList.refresh(list);
+            callback(res);
         });
     }
 
@@ -152,9 +168,13 @@ var GeoLocation = (function () {
 })();
 
 
-
+/**
+ * 页面初始化的所有参数
+ */
 
 app.on('deviceready', function () {
+    navigator.splashscreen.hide();
+
     GeoLocation.init();    
 });
 
@@ -170,96 +190,37 @@ app.on('offline', function () {
 });
 
 
-app.initialize();
+$(function () {
+    app.initialize();
 
+    $.mobile.loadPage('detail.html', true);
+
+    $( window ).on( "navigate", function( event, data ) {
+        console.log(data);
+    });
+
+    indexScroll.beforeReady();
+
+    indexScroll.on('pullDown', function (obj) {
+        var uiScroll = obj.ui;
+
+        GeoLocation.refreshPos(function (res) {
+            var list = res.list;
+
+            indexList.refresh(list);
+            uiScroll.refresh();
+        });
+    });
+
+    indexScroll.on('pullUp', function (obj) {
+        var uiScroll = obj.ui;
+        indexList.loadNextPage(function () {
+            uiScroll.refresh();
+        });
+    });
+});
 
 // test in browser
 GeoLocation.init('browser'); 
 
-
-/**
- * 首页列表
- * 
- * @type {Object}
- */
-var indexList = (function () {
-    var exports = {};
-
-    var TPL_ITEM = ''
-        + '<li class="#{type}" data-id="#{uid}">'
-        +     '<a href="#detail">'
-        +         '<h3>#{name}</h3>'
-        +         '<span class="#{level}">#{tag}</span>'
-        +         '<span class="#{tel}"></span>'
-        +         '<span class="#{rate}"></span>'
-        +         '<span class="#{coupon}"></span>'
-        +         '<span class="distance">#{distance}</span>'
-        +     '</a>'
-        + '</li>';
-
-    function getHtmlByData(data) {
-        var html = [];
-
-        $.each(data, function (index, item) {
-            var key = util.getConfig('typeMapReverse')[item.type];
-
-            var place = {
-                uid: item.uid,
-                name: item.name,
-                distance: unitFormat(item.distance),
-                type: key || '',
-                tel: item.telephone ? 'tel' : '',
-                coupon: (item.events && item.events.length) ? 'coupon' : ''
-            };
-
-            html[index] = util.format(TPL_ITEM, place);
-        });
-
-        return html.join('');
-    }
-
-    exports.refresh = function (data) {
-
-        var result = getHtmlByData(data);
-
-        if (!result) {
-            result = '<li class="no-data-block">真遗憾，附近都没有可以推荐的地方耶~</li>'
-        }
-
-        $('#rec-list').html(result);
-    };
-
-    exports.loadPage = function (page) {
-
-
-
-        $('#rec-list').after('<ul class="rec-list" data-page="' + page + '"></ul>');
-    };
-
-
-    var TPL_LOADING = '<li class="no-data-block ui-loading">正在加载数据...</li>';
-
-    exports.append = function (data, container) {
-        var result = getHtmlByData(data);
-
-        if (!result) {
-            result = '<li class="data-end-block">-------END-------</li>'
-        }
-
-        $(container).html(result);
-
-    
-    };
-
-    function unitFormat(value) {
-        if ( value > 1000 ) {
-            return Math.round( value / 100 ) / 10 + 'km';
-        }
-        else {
-            return Math.round( value ) + 'm';
-        }
-    }
-
-    return exports;
-})();
 

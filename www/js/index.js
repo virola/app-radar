@@ -50,10 +50,12 @@ var util = (function () {
 
     exports.Observable = Observable;
 
-    var CONFIG = {
-        'mapapi': 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php',
+    var MAPAPI = 'http://miao215.duapp.com/map/index.php';
 
-        'sumapi': 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php?type=sum',
+    var CONFIG = {
+        'mapapi': MAPAPI,
+        'sumapi': MAPAPI + '?type=sum',
+        'detailapi': MAPAPI + '?type=placedetail',
 
         'typeMap': {
             'scene'     : '景点',
@@ -161,8 +163,8 @@ var app = (function() {
 
     function bindDocumentEvent(id) {
 
-        return function () {
-            app.fire(id);
+        return function (e) {
+            app.fire(id, e);
         };
         
     }
@@ -203,182 +205,120 @@ window.Location = function(success,fail,act) {
 };
 
 
+var indexScroll = (function () {
+    var exports = new util.Observable();
 
-app.on('deviceready', function () {
-    document.querySelector('.listening').style.display = 'none';
+    var uiScroll;
 
-    $.mobile.navigate('#index');
-});
+    var pullDownEl = document.getElementById('pull-down');
+    var pullUpEl = document.getElementById('pull-up');
 
+    var downLabel = pullDownEl.querySelector('.pull-down-label');
+    var upLabel = pullUpEl.querySelector('.pull-up-label');
 
-function debugMsg(msg) {
-    $('#debug').html(msg);
-}
+    exports.init = function () {
+        document.addEventListener('touchmove', function (e) { 
+            e.preventDefault(); 
+        }, false);
 
-
-// list page
-var GeoLocation = (function () {
-    var exports = {};
-
-    var QUERY_MAP = util.getConfig('typeMap');
-
-    var query = {
-        type: 'place',
-        query: '餐馆',
-        location: '',
-        radius: '1000'
-    };
-
-    var location = {};
-
-    var onSuccess = function(position) {
-        showLocation(position);
-    };
-
-    function showLocation(position) {
-        debugMsg('Latitude: '   + position.lat        + '<br>'
-            + 'Longitude: '     + position.lng        + '<br>'
-            + 'Accuracy: '      + position.accuracy   + '<br>'
-        );
-
-        location.lat = position.lat;
-        location.lng = position.lng;
-
-        requestAllData(location);
-
-        bindFrameEvents();
-    }
-
-    function onError(error) {
-
-        debugMsg('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
-
-    exports.init = function (mode) {
-        debugMsg('正在定位中...');
-
-        if ( mode != 'browser' && window.Location ) {
-            window.Location(onSuccess, onError);
+        if ( !uiScroll ) {
+            initScroll();
         }
-        else {
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition(function (loc) {
-                    onSuccess({
-                        lat: loc.coords.latitude,
-                        lng: loc.coords.longitude,
-                        accuracy: loc.coords.accuracy
-                    });
-                }, onError);
+    };
+
+    exports.beforeReady = function () {
+        $(pullDownEl).hide();
+        $(pullUpEl).hide();
+    };
+
+    exports.ready = function () {
+        $(pullDownEl).show();
+        $(pullUpEl).show();
+    }
+
+    function initScroll() {
+        var pullDownOffset = pullDownEl.offsetHeight;
+        var pullUpOffset = pullUpEl.offsetHeight;
+
+        var downText = '上拉刷新列表。。。';
+        var downTextEdge = '释放刷新列表。。。';
+
+        var upText = '下拉加载更多。。。';
+
+        var loadingText = '加载请稍后。。。';
+        
+        uiScroll = new iScroll('main', {
+            useTransition: true,
+            topOffset: pullDownOffset,
+            onRefresh: function () {
+                if (pullDownEl.className.match('loading')) {
+                    pullDownEl.className = '';
+                    downLabel.innerHTML = downText;
+                } else if (pullUpEl.className.match('loading')) {
+                    pullUpEl.className = '';
+                    upLabel.innerHTML = upText;
+                }
+            },
+            onScrollMove: function () {
+                if (this.y > 5 && !pullDownEl.className.match('flip')) {
+                    pullDownEl.className = 'flip';
+                    downLabel.innerHTML = downTextEdge;
+                    this.minScrollY = 0;
+                } else if (this.y < 5 && pullDownEl.className.match('flip')) {
+                    pullDownEl.className = '';
+                    downLabel.innerHTML = downText;
+                    this.minScrollY = -pullDownOffset;
+                } else if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
+                    pullUpEl.className = 'flip';
+                    upLabel.innerHTML = downTextEdge;
+                    this.maxScrollY = this.maxScrollY;
+                } else if (this.y > (this.maxScrollY + 5) && pullUpEl.className.match('flip')) {
+                    pullUpEl.className = '';
+                    upLabel.innerHTML = upText;
+                    this.maxScrollY = pullUpOffset;
+                }
+            },
+            onScrollEnd: function () {
+                if (pullDownEl.className.match('flip')) {
+                    pullDownEl.className = 'loading';
+                    downLabel.innerHTML = loadingText;                
+                    pullDownAction();   // Execute custom function (ajax call?)
+                } else if (pullUpEl.className.match('flip')) {
+                    pullUpEl.className = 'loading';
+                    upLabel.innerHTML = loadingText;                
+                    pullUpAction(); // Execute custom function (ajax call?)
+                }
             }
-            else {
-                debugMsg('没有定位功能呢。。。');
-            }
-        }
-        
-        
-    };
-
-    /**
-     * 取某个分类下的数据
-     * 
-     * @param {[type]} type [type description]
-     * @return {[type]} [return description]
-     */
-    function requestType(type) {
-        type = type || 'market';
-        var url = util.getConfig('mapapi');
-
-        var mapType = util.getConfig('typeConfig');
-
-        var data = {
-            type: mapType[type],
-            location: location.lat + ',' + location.lng
-        };
-
-        util.request(url, data, function (res) {
-            console.log(res);
         });
-    }
-
-    exports.requestType = requestType;
-
-    function requestAllData(loc, page) {
-        var url = util.getConfig('sumapi');
-        var data = {
-            location: loc.lat + ',' + loc.lng,
-            page: page || 0
-        };
         
+        // setTimeout(function () { 
+        //     document.getElementById('wrapper').style.left = '0'; 
+        // }, 800);
+    }
 
-        util.request(url, data, function (res) {
-            var group = res.tuangou;
-            var place = res.place;
-            var list = res.list;
-            console.log(list);
 
-            indexList.refresh(list);
+    var generatedCount = 0;
+
+    function pullDownAction() {
+
+        exports.fire('pullDown', {
+            ui: uiScroll
         });
+
     }
 
-    exports.requestAll = requestAllData;
+    function pullUpAction () {
 
-    function bindFrameEvents() {
+        exports.fire('pullUp', {
+            ui: uiScroll
+        });
 
-        if (window.location.hash == '#index') {
-            var exitTime = 0;
-            var timer;
-
-            app.on('backbutton', function () {
-                exitTime++;
-
-                timer = setTimout( function () {
-                    if (exitTime > 1) {
-                        clearTimeout(timer);
-                        navigator.app.exitApp();
-                    }
-                }, 1000 );
-                
-            });
-
-            app.on('menubutton', function () {
-                $( "#left-panel" ).panel( "toggle" );
-            });
-
-
-            // 翻页请求
-            
-        }
     }
+
 
     return exports;
-
 })();
 
-
-
-
-app.on('deviceready', function () {
-    GeoLocation.init();    
-});
-
-app.on('online', function () {
-    // alert('you are online!');    
-});
-
-app.on('offline', function () {
-    // stop lbs
-    window.Location(function(result) {
-        alert('you are offline!');
-    }, function () {}, 'stop');
-});
-
-
-app.initialize();
-
-
-// test in browser
-GeoLocation.init('browser'); 
 
 
 /**
@@ -391,7 +331,7 @@ var indexList = (function () {
 
     var TPL_ITEM = ''
         + '<li class="#{type}" data-id="#{uid}">'
-        +     '<a href="#detail">'
+        +     '<a href="#detail" data-rel="detail">'
         +         '<h3>#{name}</h3>'
         +         '<span class="#{level}">#{tag}</span>'
         +         '<span class="#{tel}"></span>'
@@ -433,15 +373,30 @@ var indexList = (function () {
         $('#rec-list').html(result);
     };
 
-    exports.loadPage = function (page) {
+    var listContainer = $('#content');
 
+    var currentPage = 0;
 
+    function loadPage(page, callback) {
 
-        $('#rec-list').after('<ul class="rec-list" data-page="' + page + '"></ul>');
+        GeoLocation.requestAll(page, function (res) {
+            var list = res.list;
+
+            var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
+            listContainer.append(ul);
+
+            indexList.append(list, ul);
+
+            callback(res);
+        });
+
     };
 
+    exports.loadNextPage = function (callback) {
+        currentPage++;
 
-    var TPL_LOADING = '<li class="no-data-block ui-loading">正在加载数据...</li>';
+        loadPage(currentPage, callback);
+    };
 
     exports.append = function (data, container) {
         var result = getHtmlByData(data);
@@ -451,8 +406,6 @@ var indexList = (function () {
         }
 
         $(container).html(result);
-
-    
     };
 
     function unitFormat(value) {
@@ -466,4 +419,230 @@ var indexList = (function () {
 
     return exports;
 })();
+
+
+
+app.on('deviceready', function () {
+    document.querySelector('.listening').style.display = 'none';
+
+    $.mobile.navigate('#index');
+});
+
+
+function debugMsg(msg) {
+    $('#debug').html(msg);
+}
+
+
+// list page
+var GeoLocation = (function () {
+    var exports = {};
+
+    var QUERY_MAP = util.getConfig('typeMap');
+
+    var query = {
+        type: 'place',
+        query: '餐馆',
+        location: '',
+        radius: '1000'
+    };
+
+    var TPL_LOADING = '<li class="no-data-block ui-loading">雷达正在探测中...</li>';
+
+    var location = {};
+
+    var MODE = '';
+
+    exports.refreshPos = function (callback) {
+        callback = callback || new Function();
+
+        if ( MODE != 'browser' && window.Location ) {
+            window.Location(function (pos) {
+                showLocation(pos, callback);
+            }, onError);
+        }
+        else {
+            if ( navigator.geolocation ) {
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    showLocation({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy
+                        }, callback);
+
+                    
+                }, onError);
+            }
+            else {
+                alert('没有定位功能呢。。。');
+            }
+        }
+    };
+
+    function onError(error) {
+
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+
+    exports.init = function (mode) {
+        MODE = mode;
+
+        $('#rec-list').html(TPL_LOADING);
+        exports.refreshPos(function (res) {
+            indexScroll.ready();
+
+            indexScroll.init();
+        });
+    };
+
+
+    function showLocation(position, callback) {
+        callback = callback || new Function();
+
+        location.lat = position.lat;
+        location.lng = position.lng;
+
+        requestAllData(0, function (res) {
+            var list = res.list;
+            console.log(list);
+
+            indexList.refresh(list);
+
+            callback(res);
+            
+        });
+
+        bindFrameEvents();
+    }
+
+    /**
+     * 取某个分类下的数据
+     * 
+     * @param {[type]} type [type description]
+     * @return {[type]} [return description]
+     */
+    function requestType(type) {
+        type = type || 'market';
+        var url = util.getConfig('mapapi');
+
+        var mapType = util.getConfig('typeConfig');
+
+        var data = {
+            type: mapType[type],
+            location: location.lat + ',' + location.lng
+        };
+
+        util.request(url, data, function (res) {
+            console.log(res);
+        });
+    }
+
+    exports.requestType = requestType;
+
+    function requestAllData(page, callback) {
+        callback = callback || new Function();
+
+        var url = util.getConfig('sumapi');
+        var data = {
+            location: location.lat + ',' + location.lng,
+            page: page || 0
+        };
+        
+
+        util.request(url, data, function (res) {
+            callback(res);
+        });
+    }
+
+    exports.requestAll = requestAllData;
+
+    function bindFrameEvents() {
+
+        if (window.location.hash == '#index') {
+            var exitTime = 0;
+            var timer;
+
+            app.on('backbutton', function () {
+                exitTime++;
+
+                timer = setTimout( function () {
+                    if (exitTime > 1) {
+                        clearTimeout(timer);
+                        navigator.app.exitApp();
+                    }
+                }, 1000 );
+                
+            });
+
+            app.on('menubutton', function () {
+                $( "#left-panel" ).panel( "toggle" );
+            });
+
+
+            // 翻页请求
+            
+        }
+    }
+
+    return exports;
+
+})();
+
+
+/**
+ * 页面初始化的所有参数
+ */
+
+app.on('deviceready', function () {
+    navigator.splashscreen.hide();
+
+    GeoLocation.init();    
+});
+
+app.on('online', function () {
+    // alert('you are online!');    
+});
+
+app.on('offline', function () {
+    // stop lbs
+    window.Location(function(result) {
+        alert('you are offline!');
+    }, function () {}, 'stop');
+});
+
+
+$(function () {
+    app.initialize();
+
+    $.mobile.loadPage('detail.html', true);
+
+    $( window ).on( "navigate", function( event, data ) {
+        console.log(data);
+    });
+
+    indexScroll.beforeReady();
+
+    indexScroll.on('pullDown', function (obj) {
+        var uiScroll = obj.ui;
+
+        GeoLocation.refreshPos(function (res) {
+            var list = res.list;
+
+            indexList.refresh(list);
+            uiScroll.refresh();
+        });
+    });
+
+    indexScroll.on('pullUp', function (obj) {
+        var uiScroll = obj.ui;
+        indexList.loadNextPage(function () {
+            uiScroll.refresh();
+        });
+    });
+});
+
+// test in browser
+GeoLocation.init('browser'); 
+
 

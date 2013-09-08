@@ -59,48 +59,30 @@ li {
 body {
   background: #160c0a;
 }
-.app {
-  display: block;
-  background: #160c0a url(../img/logo.png) no-repeat center 30px;
-  text-align: center;
-  height: 100%;
-  min-height: 420px;
-}
-.app div {
-  position: absolute;
-  width: 100%;
-  bottom: 30px;
-  color: #fff;
-  text-shadow: 0;
-}
-.app div a {
-  color: #FFF;
-}
-@keyframes fade {
-  from {
-    opacity: 1.0;
-  }
-  50% {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1.0;
-  }
-}
-@-webkit-keyframes fade {
-  from {
-    opacity: 1.0;
-  }
-  50% {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1.0;
-  }
-}
 .blink {
   animation: fade 3000ms infinite;
   -webkit-animation: fade 3000ms infinite;
+}
+.scene-bg {
+  background: #4fdbc2;
+}
+.hotel-bg {
+  background: #ffbded;
+}
+.food-bg {
+  background: #ffad26;
+}
+.enjoy-bg {
+  background: #38d7ff;
+}
+.market-bg {
+  background: #c1f797;
+}
+.shopping-bg {
+  background: #ec7ebc;
+}
+.life-bg {
+  background: #7dd2d1;
 }
 .hide {
   display: none;
@@ -116,7 +98,7 @@ body {
   font-size: 0;
   display: block;
 }
-#content {
+.main {
   padding: 0;
 }
 .rec-list {
@@ -139,14 +121,16 @@ body {
   position: relative;
   display: block;
   border: 1px solid #FFF;
-  height: 4em;
-  padding: 0.1em;
+  border-left: 0;
+  border-bottom: 0;
+  height: 5em;
+  padding: .1em .3em;
   color: #000;
   text-shadow: 0 0 0;
   text-decoration: none;
 }
 .rec-list li a h3 {
-  font-size: 1.2em;
+  font-size: 1.1em;
   line-height: 1.5em;
   color: #000;
 }
@@ -162,7 +146,7 @@ body {
   display: inline;
 }
 .rec-list li a span.distance {
-  color: #0099cc;
+  color: #0033cc;
   position: absolute;
   bottom: .4em;
   right: .4em;
@@ -183,7 +167,7 @@ body {
   background-color: #c1f797;
 }
 .rec-list li.shopping {
-  background-color: #ac4e83;
+  background-color: #ec7ebc;
 }
 .rec-list li.life {
   background-color: #7dd2d1;
@@ -266,6 +250,65 @@ body {
   -webkit-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
   box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+}
+#main {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+#pull-down,
+#pull-up {
+  background: #fff;
+  height: 3em;
+  line-height: 3em;
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #888;
+}
+#pull-up .pull-up-icon,
+#pull-down .pull-down-icon {
+  display: block;
+  float: left;
+  width: 40px;
+  height: 40px;
+  margin-top: 0.8em;
+  background: url(../img/pull-icon@2x.png) 0 0 no-repeat;
+  -webkit-background-size: 40px 80px;
+  background-size: 40px 80px;
+  -webkit-transition-property: -webkit-transform;
+  -webkit-transition-duration: 250ms;
+}
+#pull-down .pull-down-icon {
+  -webkit-transform: rotate(0deg) translateZ(0);
+}
+#pull-up .pull-up-icon {
+  -webkit-transform: rotate(-180deg) translateZ(0);
+}
+#pull-down.flip .pull-down-icon {
+  -webkit-transform: rotate(-180deg) translateZ(0);
+}
+#pull-up.flip .pull-up-icon {
+  -webkit-transform: rotate(0deg) translateZ(0);
+}
+#pull-down.loading .pull-down-icon,
+#pull-up.loading .pull-up-icon {
+  background-position: 0 100%;
+  -webkit-transform: rotate(0deg) translateZ(0);
+  -webkit-transition-duration: 0ms;
+  -webkit-animation-name: loading;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+@-webkit-keyframes loading {
+  from {
+    -webkit-transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg) translateZ(0);
+  }
 }
 #detail .ui-footer p {
   padding: 0.2em 1em;

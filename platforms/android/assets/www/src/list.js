@@ -1,97 +1,99 @@
 
-var url = 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php';
-
-var query = {
-    type: 'place',
-    query: '餐馆',
-    location: '',
-    radius: '1000'
-};
-
-function debugMsg(msg) {
-    $('#debug').append(msg + '<br>');
-}
-
-var GeoLocation = (function () {
+/**
+ * 首页列表
+ * 
+ * @type {Object}
+ */
+var indexList = (function () {
     var exports = {};
 
-    var location = {};
+    var TPL_ITEM = ''
+        + '<li class="#{type}" data-id="#{uid}">'
+        +     '<a href="#detail" data-rel="detail">'
+        +         '<h3>#{name}</h3>'
+        +         '<span class="#{level}">#{tag}</span>'
+        +         '<span class="#{tel}"></span>'
+        +         '<span class="#{rate}"></span>'
+        +         '<span class="#{coupon}"></span>'
+        +         '<span class="distance">#{distance}</span>'
+        +     '</a>'
+        + '</li>';
 
-    var onSuccess = function(position) {
-        showLocation(position);
+    function getHtmlByData(data) {
+        var html = [];
+
+        $.each(data, function (index, item) {
+            var key = util.getConfig('typeMapReverse')[item.type];
+
+            var place = {
+                uid: item.uid,
+                name: item.name,
+                distance: unitFormat(item.distance),
+                type: key || '',
+                tel: item.telephone ? 'tel' : '',
+                coupon: (item.events && item.events.length) ? 'coupon' : ''
+            };
+
+            html[index] = util.format(TPL_ITEM, place);
+        });
+
+        return html.join('');
+    }
+
+    exports.refresh = function (data) {
+
+        var result = getHtmlByData(data);
+
+        if (!result) {
+            result = '<li class="no-data-block">真遗憾，附近都没有可以推荐的地方耶~</li>'
+        }
+
+        $('#rec-list').html(result);
     };
 
-    function showLocation(position) {
-        debugMsg('Latitude: '   + position.lat        + '\n'
-            + 'Longitude: '     + position.lng        + '\n'
-            + 'Speed: '         + position.speed      + '\n'
-            + 'Addr:'           + position.addr
-        );
+    var listContainer = $('#content');
 
-        location.lat = position.lat;
-        location.lng = position.lng;
+    var currentPage = 0;
 
-        requestData(location);
-    }
+    function loadPage(page, callback) {
 
-    function onError(error) {
+        GeoLocation.requestAll(page, function (res) {
+            var list = res.list;
 
-        debugMsg('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
+            var ul = $('<ul class="rec-list" data-page="' + page + '"></ul>');
+            listContainer.append(ul);
 
-    exports.init = function () {
-        debugMsg('正在定位中...');
+            indexList.append(list, ul);
 
-        if ( window.Location ) {
-            debugMsg('BaiduLoction...');
-            window.Location(onSuccess, onError);
+            callback(res);
+        });
+
+    };
+
+    exports.loadNextPage = function (callback) {
+        currentPage++;
+
+        loadPage(currentPage, callback);
+    };
+
+    exports.append = function (data, container) {
+        var result = getHtmlByData(data);
+
+        if (!result) {
+            result = '<li class="data-end-block">-------END-------</li>'
+        }
+
+        $(container).html(result);
+    };
+
+    function unitFormat(value) {
+        if ( value > 1000 ) {
+            return Math.round( value / 100 ) / 10 + 'km';
         }
         else {
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition(onSuccess, onError, { 
-                    maximumAge: 3000, 
-                    timeout: 5000, 
-                    enableHighAccuracy: true 
-                });
-            }
-            else {
-                debugMsg('没有这个功能。。。');
-            }
+            return Math.round( value ) + 'm';
         }
-        
-        
-    };
-
-    var list;
-
-    function requestData() {
-        var data = $.extend(query, {
-            location: location.lat + ',' + location.lng
-        });
-        $.getJSON(url, data, function (res) {
-            // todo
-            if (!res.status) {
-                list = res.results;
-
-                alert(res.results.length);
-            }
-        });
-
-        console.log(query);
     }
 
     return exports;
-
 })();
-
-
-app.on('deviceready', function () {
-    GeoLocation.init();    
-});
-
-app.on('online', function () {
-    alert('you are online!');    
-});
-
-app.initialize();

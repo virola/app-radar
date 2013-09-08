@@ -16,7 +16,7 @@ function debugMsg(msg) {
 var GeoLocation = (function () {
     var exports = {};
 
-    var url = 'http://cq01-rdqa-dev005.cq01.baidu.com:8888/hackathon/map/index.php';
+    var QUERY_MAP = util.getConfig('typeMap');
 
     var query = {
         type: 'place',
@@ -25,71 +25,115 @@ var GeoLocation = (function () {
         radius: '1000'
     };
 
+    var TPL_LOADING = '<li class="no-data-block ui-loading">雷达正在探测中...</li>';
+
     var location = {};
 
-    var onSuccess = function(position) {
-        showLocation(position);
+    var MODE = '';
+
+    exports.refreshPos = function (callback) {
+        callback = callback || new Function();
+
+        if ( MODE != 'browser' && window.Location ) {
+            window.Location(function (pos) {
+                showLocation(pos, callback);
+            }, onError);
+        }
+        else {
+            if ( navigator.geolocation ) {
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    showLocation({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy
+                        }, callback);
+
+                    
+                }, onError);
+            }
+            else {
+                alert('没有定位功能呢。。。');
+            }
+        }
     };
 
-    function showLocation(position) {
-        debugMsg('Latitude: '   + position.lat        + '<br>'
-            + 'Longitude: '     + position.lng        + '<br>'
-            + 'Accuracy: '      + position.accuracy   + '<br>'
-        );
+    function onError(error) {
+
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+
+    exports.init = function (mode) {
+        MODE = mode;
+
+        $('#rec-list').html(TPL_LOADING);
+        exports.refreshPos(function (res) {
+            indexScroll.ready();
+
+            indexScroll.init();
+        });
+    };
+
+
+    function showLocation(position, callback) {
+        callback = callback || new Function();
 
         location.lat = position.lat;
         location.lng = position.lng;
 
-        requestData(location);
-    }
+        requestAllData(0, function (res) {
+            var list = res.list;
+            console.log(list);
 
-    function onError(error) {
+            indexList.refresh(list);
 
-        debugMsg('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
-
-    exports.init = function () {
-        debugMsg('正在定位中...');
-
-        if ( window.Location ) {
-            window.Location(onSuccess, onError);
-        }
-        else {
-            if ( navigator.geolocation ) {
-                navigator.geolocation.getCurrentPosition(onSuccess, onError, { 
-                    maximumAge: 3000, 
-                    timeout: 5000, 
-                    enableHighAccuracy: true 
-                });
-            }
-            else {
-                debugMsg('没有定位功能呢。。。');
-            }
-        }
-        
-        
-    };
-
-    var list;
-
-    function requestData() {
-        var data = $.extend(query, {
-            location: location.lat + ',' + location.lng
+            callback(res);
+            
         });
-        $.getJSON(url, data, function (res) {
-            // todo
-            if (!res.status) {
-                list = res.results;
-
-                alert(res.results.length);
-            }
-        });
-
-        console.log(query);
 
         bindFrameEvents();
     }
+
+    /**
+     * 取某个分类下的数据
+     * 
+     * @param {[type]} type [type description]
+     * @return {[type]} [return description]
+     */
+    function requestType(type) {
+        type = type || 'market';
+        var url = util.getConfig('mapapi');
+
+        var mapType = util.getConfig('typeConfig');
+
+        var data = {
+            type: mapType[type],
+            location: location.lat + ',' + location.lng
+        };
+
+        util.request(url, data, function (res) {
+            console.log(res);
+        });
+    }
+
+    exports.requestType = requestType;
+
+    function requestAllData(page, callback) {
+        callback = callback || new Function();
+
+        var url = util.getConfig('sumapi');
+        var data = {
+            location: location.lat + ',' + location.lng,
+            page: page || 0
+        };
+        
+
+        util.request(url, data, function (res) {
+            callback(res);
+        });
+    }
+
+    exports.requestAll = requestAllData;
 
     function bindFrameEvents() {
 
@@ -112,6 +156,10 @@ var GeoLocation = (function () {
             app.on('menubutton', function () {
                 $( "#left-panel" ).panel( "toggle" );
             });
+
+
+            // 翻页请求
+            
         }
     }
 
@@ -120,7 +168,13 @@ var GeoLocation = (function () {
 })();
 
 
+/**
+ * 页面初始化的所有参数
+ */
+
 app.on('deviceready', function () {
+    navigator.splashscreen.hide();
+
     GeoLocation.init();    
 });
 
@@ -136,5 +190,37 @@ app.on('offline', function () {
 });
 
 
+$(function () {
+    app.initialize();
 
-app.initialize();
+    $.mobile.loadPage('detail.html', true);
+
+    $( window ).on( "navigate", function( event, data ) {
+        console.log(data);
+    });
+
+    indexScroll.beforeReady();
+
+    indexScroll.on('pullDown', function (obj) {
+        var uiScroll = obj.ui;
+
+        GeoLocation.refreshPos(function (res) {
+            var list = res.list;
+
+            indexList.refresh(list);
+            uiScroll.refresh();
+        });
+    });
+
+    indexScroll.on('pullUp', function (obj) {
+        var uiScroll = obj.ui;
+        indexList.loadNextPage(function () {
+            uiScroll.refresh();
+        });
+    });
+});
+
+// test in browser
+GeoLocation.init('browser'); 
+
+

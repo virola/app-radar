@@ -1,3 +1,4 @@
+var radar = {};
 
 var util = (function () {
     
@@ -49,6 +50,84 @@ var util = (function () {
 
     exports.Observable = Observable;
 
+    var MAPAPI = 'http://miao215.duapp.com/map/index.php';
+
+    var CONFIG = {
+        'mapapi': MAPAPI,
+        'sumapi': MAPAPI + '?type=sum',
+        'detailapi': MAPAPI + '?type=placedetail',
+
+        'typeMap': {
+            'scene'     : '景点',
+            'shopping'  : '购物',
+            'market'    : '超市',
+            'food'      : '餐饮',
+            'enjoy'     : '娱乐',
+            'groupon'   : '团购',
+            'life'      : '生活'
+        },
+
+        'typeConfig': {
+            'scene': 'place',
+            'shopping': 'place',
+            'market': 'place',
+            'food': 'place',
+            'groupon': 'tuangou'
+        },
+
+        'initialType': []
+    };
+
+    // key value 反置
+    var tmpJson = {};
+
+    for ( var i in CONFIG.typeMap ) {
+        tmpJson[CONFIG.typeMap[i]] = i;
+    }
+
+    CONFIG.typeMapReverse = tmpJson;
+
+    exports.getConfig = function (key) {
+        return CONFIG[key] || '';
+    };
+
+    exports.request = function(url, query, callback) {
+        url += (url.indexOf('?') > -1 ? '&' : '?') + 'jsoncallback=?';
+        query.format = 'json';
+        // query.cache = true;
+
+        $.getJSON( url, query, {
+            cache: true
+        }).done(function(res) {
+            if (!res.status) {
+
+                callback(res.results);
+            }
+        });
+    }
+
+    var baiduStringFormat = function (source, opts) {
+        source = String(source);
+        var data = Array.prototype.slice.call(arguments,1), toString = Object.prototype.toString;
+        if(data.length){
+            data = data.length == 1 ? 
+                /* ie 下 Object.prototype.toString.call(null) == '[object Object]' */
+                (opts !== null && (/\[object Array\]|\[object Object\]/.test(toString.call(opts))) ? opts : data) 
+                : data;
+            return source.replace(/#\{(.+?)\}/g, function (match, key){
+                var replacer = data[key];
+                // chrome 下 typeof /a/ == 'function'
+                if('[object Function]' == toString.call(replacer)){
+                    replacer = replacer(key);
+                }
+                return ('undefined' == typeof replacer ? '' : replacer);
+            });
+        }
+        return source;
+    };
+
+    exports.format = baiduStringFormat;
+
     return exports;
    
 })();
@@ -84,8 +163,8 @@ var app = (function() {
 
     function bindDocumentEvent(id) {
 
-        return function () {
-            app.fire(id);
+        return function (e) {
+            app.fire(id, e);
         };
         
     }

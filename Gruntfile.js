@@ -34,6 +34,8 @@ module.exports = function (grunt) {
                 src: [
                     'www/src/app.js',
                     'www/src/BaiduLoc.js',
+                    'www/src/scroll.js',
+                    'www/src/list.js',
                     'www/src/index.js'
                 ],
                 dest: 'www/js/index.js'
