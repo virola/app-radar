@@ -47,6 +47,9 @@ li {
 body {
   background: #160c0a;
 }
+#index-header {
+  z-index: 100;
+}
 .blink {
   animation: fade 3000ms infinite;
   -webkit-animation: fade 3000ms infinite;

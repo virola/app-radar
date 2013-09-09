@@ -774,6 +774,6 @@ $(function () {
 });
 
 // // test in browser
-GeoLocation.init('browser'); 
+// GeoLocation.init('browser'); 
 
 
