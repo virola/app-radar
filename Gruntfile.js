@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         watch: {
 
             index: {
-                files: ['www/less/*', 'www/src/*'],
+                files: ['www/src/less/*', 'www/src/*'],
                 tasks: ['index']
             }
             
@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         less: {
             index: {
                 files: {
-                    'www/css/index.css': 'www/less/index.less'
+                    'www/asset/index.css': 'www/src/less/index.less'
                 }
             }
 
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
                     'www/src/detail.js',
                     'www/src/index.js'
                 ],
-                dest: 'www/js/index.js'
+                dest: 'www/asset/index.js'
             }
             
         },
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
         uglify: {
             index: {
                 files: {
-                    'www/js/index.js': 'www/js/index.js'
+                    'www/asset/index.js': 'www/asset/index.js'
                 }
             }
         },
@@ -54,8 +54,8 @@ module.exports = function (grunt) {
         cssmin: {
             index: {
                 files: {
-                    'www/css/index.css': 'www/css/index.css',
-                    'www/css/list.css': 'www/css/list.css'
+                    'www/asset/index.css': 'www/asset/index.css',
+                    'www/asset/list.css': 'www/asset/list.css'
                 }
             }
         }

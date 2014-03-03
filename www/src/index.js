@@ -199,8 +199,6 @@ app.on('offline', function () {
 
 $(function () {
     app.initialize();
-
-    // $.mobile.loadPage('detail.html', true);
     
     $.mobile.defaultTransition = 'none';
 
