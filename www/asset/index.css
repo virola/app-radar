@@ -1,0 +1,351 @@
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+
+}
+body {
+  -webkit-touch-callout: none;
+  /* prevent callout to copy image, etc when tap to hold */
+
+  -webkit-text-size-adjust: none;
+  /* prevent webkit from resizing text to fit */
+
+  -webkit-user-select: none;
+  /* prevent copy paste, to allow, change 'none' to 'text' */
+
+  font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+  margin: 0px;
+  padding: 0px;
+  font-size: 1em;
+}
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7,
+p,
+em,
+strong,
+i,
+b {
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: normal;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body {
+  background: #160c0a;
+}
+#index-header {
+  z-index: 100;
+}
+.blink {
+  animation: fade 3000ms infinite;
+  -webkit-animation: fade 3000ms infinite;
+}
+.scene-bg {
+  background: #4fdbc2;
+}
+.hotel-bg {
+  background: #ffbded;
+}
+.food-bg {
+  background: #ffad26;
+}
+.enjoy-bg {
+  background: #38d7ff;
+}
+.market-bg {
+  background: #c1f797;
+}
+.shopping-bg {
+  background: #ec7ebc;
+}
+.life-bg {
+  background: #7dd2d1;
+}
+.groupon-bg {
+  background: #f9c6d5;
+}
+.no-data-block {
+  background: none;
+  width: 100%;
+  text-align: center;
+  float: none;
+  color: #999;
+  font-size: 1.5em;
+  line-height: 6em;
+}
+.hide {
+  display: none;
+}
+#debug {
+  display: none;
+}
+#debug:after {
+  clear: both;
+  content: ' ';
+  visibility: hidden;
+  height: 0;
+  font-size: 0;
+  display: block;
+}
+.main {
+  padding: 0;
+  height: 100%;
+}
+.rec-list {
+  width: 100%;
+}
+.rec-list:after {
+  clear: both;
+  content: ' ';
+  visibility: hidden;
+  height: 0;
+  font-size: 0;
+  display: block;
+}
+.rec-list li {
+  float: left;
+  width: 50%;
+  background-color: #e5e5e5;
+}
+.rec-list li a {
+  position: relative;
+  display: block;
+  border: 1px solid #FFF;
+  border-left: 0;
+  border-bottom: 0;
+  height: 5em;
+  padding: .1em .3em;
+  color: #000;
+  text-shadow: 0 0 0;
+  text-decoration: none;
+}
+.rec-list li a h3 {
+  font-size: 1.1em;
+  line-height: 1.5em;
+  color: #000;
+}
+.rec-list li a span {
+  font-size: 0.9em;
+  display: none;
+  color: #666;
+}
+.rec-list li a span.level,
+.rec-list li a span.tel,
+.rec-list li a span.distance,
+.rec-list li a span.coupon {
+  display: inline;
+}
+.rec-list li a span.distance {
+  color: #0066cc;
+  position: absolute;
+  bottom: .4em;
+  right: .4em;
+}
+.rec-list li.scene {
+  background-color: #4fdbc2;
+}
+.rec-list li.hotel {
+  background-color: #ffbded;
+}
+.rec-list li.groupon {
+  background-color: #f9c6d5;
+}
+.rec-list li.food {
+  background-color: #ffad26;
+}
+.rec-list li.enjoy {
+  background-color: #38d7ff;
+}
+.rec-list li.market {
+  background-color: #c1f797;
+}
+.rec-list li.shopping {
+  background-color: #ec7ebc;
+}
+.rec-list li.life {
+  background-color: #7dd2d1;
+}
+.rec-list li.no-data-block,
+.rec-list li.data-end-block {
+  background: none;
+  width: 100%;
+  text-align: center;
+  float: none;
+  color: #999;
+  font-size: 1.5em;
+  line-height: 6em;
+}
+.rec-list li.data-end-block {
+  height: 1.5em;
+  line-height: 1;
+}
+#left-panel.ui-panel {
+  width: 8em;
+}
+#left-panel.ui-panel-closed {
+  width: 0;
+}
+.ui-panel-position-left.ui-panel-display-reveal {
+  left: 0;
+}
+.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open,
+.ui-panel-dismiss-position-left.ui-panel-dismiss-open {
+  left: 8em;
+  right: -8em;
+}
+.ui-panel-animate.ui-panel-content-wrap-position-left.ui-panel-content-wrap-open.ui-panel-content-wrap-display-reveal {
+  left: 0;
+  right: 0;
+  -webkit-transform: translate3d(8em, 0, 0);
+  -moz-transform: translate3d(8em, 0, 0);
+  transform: translate3d(8em, 0, 0);
+}
+/* Combined listview collapsible menu. */
+/* Unset negative margin bottom on the listviews. */
+#left-panel .ui-panel-inner > .ui-listview {
+  margin-bottom: 0;
+}
+/* Unset top and bottom margin on collapsible set. */
+#left-panel .ui-collapsible-set {
+  margin: 0;
+}
+/* The first collapsible contains the collapsible set. Make it fit exactly in the collapsible content. */
+#left-panel .ui-panel-inner > .ui-collapsible > .ui-collapsible-content {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+/* Remove border top if a collapsible comes after a listview. */
+#left-panel .ui-panel-inner > .ui-collapsible > .ui-collapsible-heading .ui-btn,
+#left-panel .ui-collapsible.ui-first-child .ui-collapsible-heading .ui-btn {
+  border-top: none;
+}
+/* Give the first collapsible heading the same padding, i.e. same height, as the list items. */
+#left-panel .ui-collapsible-heading .ui-btn-inner {
+  padding: .7em 40px .7em 15px;
+}
+/* Give the other collapsible headings the same padding and font-size as the list divider. */
+#left-panel .ui-collapsible-set .ui-collapsible-heading .ui-btn-inner {
+  padding: .5em 40px .5em 15px;
+  font-size: 14px;
+}
+/* Styling of the close button in both panels. */
+.ui-panel-inner > .ui-listview .ui-first-child {
+  background: #eee;
+}
+/* Reveal menu shadow on top of the list items */
+.ui-panel-display-reveal {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.ui-panel-content-wrap-position-left {
+  -webkit-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: -5px 0px 5px rgba(0, 0, 0, 0.15);
+}
+#main {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  width: 100%;
+}
+#main #scroller {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+#pull-down,
+#pull-up {
+  background: #fff;
+  height: 3em;
+  line-height: 3em;
+  padding: 5px 10px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #888;
+}
+#pull-up .pull-up-icon,
+#pull-down .pull-down-icon {
+  display: block;
+  float: left;
+  width: 40px;
+  height: 40px;
+  margin-top: 0.7em;
+  background: url(../img/pull-icon@2x.png) 0 0 no-repeat;
+  -webkit-background-size: 40px 80px;
+  background-size: 40px 80px;
+  -webkit-transition-property: -webkit-transform;
+  -webkit-transition-duration: 250ms;
+}
+#pull-down .pull-down-icon {
+  -webkit-transform: rotate(0deg) translateZ(0);
+}
+#pull-up .pull-up-icon {
+  -webkit-transform: rotate(-180deg) translateZ(0);
+}
+#pull-down.flip .pull-down-icon {
+  -webkit-transform: rotate(-180deg) translateZ(0);
+}
+#pull-up.flip .pull-up-icon {
+  -webkit-transform: rotate(0deg) translateZ(0);
+}
+#pull-down.loading .pull-down-icon,
+#pull-up.loading .pull-up-icon {
+  background-position: 0 100%;
+  -webkit-transform: rotate(0deg) translateZ(0);
+  -webkit-transition-duration: 0ms;
+  -webkit-animation-name: loading;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+@-webkit-keyframes loading {
+  from {
+    -webkit-transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg) translateZ(0);
+  }
+}
+#detail .ui-footer p {
+  padding: 0.2em 1em;
+  text-align: right;
+}
+#detail #detail-content {
+  color: #8B0506;
+  /*background-color: #E4E4E4;
+        background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+        background-image: -webkit-gradient(
+            linear,
+            left top,
+            left bottom,
+            color-stop(0, #A7A7A7),
+            color-stop(0.51, #E4E4E4)
+        );*/
+
+}
+#detail .place-detail li {
+  line-height: 2em;
+}
+#detail .detail-name {
+  font-size: 2em;
+  line-height: 3em;
+}
